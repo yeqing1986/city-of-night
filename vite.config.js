@@ -19,9 +19,13 @@ export default defineConfig({
     // 代码分割
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vue-vendor': ['vue', 'vue-router', 'pinia'],
-          'vant-vendor': ['vant']
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('vant')) {
+              return 'vant-vendor'
+            }
+            return 'vue-vendor'
+          }
         }
       }
     }

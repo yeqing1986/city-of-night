@@ -306,14 +306,17 @@ function onNotificationClick() {
 .numpad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  max-width: 300px;
+  gap: 12px;
+  max-width: 280px;
   margin: 0 auto;
   width: 100%;
 }
 .key {
   position: relative;
-  height: 58px;
+  width: 100%;
+  aspect-ratio: 1;
+  min-height: 56px;
+  max-height: 72px;
   border-radius: 50%;
   border: none;
   background: rgba(255, 255, 255, 0.08);

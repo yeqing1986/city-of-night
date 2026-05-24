@@ -49,10 +49,7 @@
         <!-- AI 消息 -->
         <div v-else-if="msg.role === 'assistant'" class="msg-row ai">
           <div class="avatar-wrap">
-            <img v-if="characterAvatar" :src="characterAvatar" alt="" class="avatar-img" />
-            <div v-else class="avatar-placeholder">
-              <van-icon name="friends-o" size="22" />
-            </div>
+            <img :src="aiAvatar" alt="" class="avatar-img" />
           </div>
           <div class="bubble ai-bubble">
             <span class="triangle"></span>
@@ -70,9 +67,7 @@
             <div class="bubble-text">{{ msg.content }}</div>
           </div>
           <div class="avatar-wrap">
-            <div class="avatar-placeholder">
-              <van-icon name="user-o" size="22" />
-            </div>
+            <img :src="userAvatar" alt="" class="avatar-img" />
           </div>
         </div>
       </template>
@@ -80,10 +75,7 @@
       <!-- 正在输入 -->
       <div v-if="isTyping" class="msg-row ai typing-row">
         <div class="avatar-wrap">
-          <img v-if="characterAvatar" :src="characterAvatar" alt="" class="avatar-img" />
-          <div v-else class="avatar-placeholder">
-            <van-icon name="friends-o" size="22" />
-          </div>
+          <img :src="aiAvatar" alt="" class="avatar-img" />
         </div>
         <div class="bubble ai-bubble typing-bubble">
           <span class="triangle"></span>
@@ -122,8 +114,7 @@
         <!-- 用户信息 -->
         <div class="menu-header">
           <div class="menu-avatar">
-            <img v-if="characterAvatar" :src="characterAvatar" alt="" />
-            <van-icon v-else name="friends-o" size="36" />
+            <img :src="characterAvatar" alt="" />
           </div>
           <div class="menu-name">{{ characterName }}</div>
           <div class="menu-desc">32岁 · 销售 · 已婚</div>
@@ -197,7 +188,9 @@ const isDarkMode = ref(false)
 const currentDay = ref(1)
 
 const characterName = ref('叶晓阳')
-const characterAvatar = ref('')
+const characterAvatar = ref('/images/avatar-ye.svg')
+const aiAvatar = ref('/images/avatar-ai.svg')
+const userAvatar = ref('/images/avatar-user.svg')
 const isOnline = ref(true)
 
 const stats = reactive({

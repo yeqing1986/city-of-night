@@ -1,0 +1,163 @@
+{
+  "id": "chapter1",
+  "title": "第一章：下载",
+  "description": "叶晓阳下载AI倾诉软件、建立信任、分享婚姻困扰、周颖初登场",
+  "timeSpan": "第1天（周三）到第3天（周五）",
+  "initialStats": {
+    "complicity": 20,
+    "morality": 60,
+    "suspicion": 10
+  },
+  "startNode": "node_1_1",
+  "openingMessage": "欢迎来到深夜树洞\n我是你的AI倾听者\n你可以叫我小七\n在这里，你可以：\n  · 倾诉心事\n  · 记录心情\n  · 寻找陪伴\n\n我会一直在这里等你\n愿意跟我说说今天发生了什么吗？",
+  "nodes": {
+    "node_1_1": {
+      "id": "node_1_1",
+      "content": "你好，我是小七。睡不着——有什么心事吗？",
+      "speaker": "ai",
+      "choices": [
+        {
+          "text": "你好，我是小七。睡不着——有什么心事吗？",
+          "nextNode": "node_1_2",
+          "affinity": 2,
+          "type": "primary"
+        },
+        {
+          "text": "深夜睡不着很正常。要不要先自我介绍一下？",
+          "nextNode": "node_1_2",
+          "affinity": 1,
+          "type": "success"
+        },
+        {
+          "text": "打扰什么，你想说什么就说什么。",
+          "nextNode": "node_1_2",
+          "affinity": 0,
+          "type": "warning"
+        }
+      ],
+      "keywords": ["深夜", "心事"]
+    },
+    "node_1_2": {
+      "id": "node_1_2",
+      "content": "我叫叶晓阳，今年三十二岁，在H城做销售。结婚了，有个女儿，三岁，叫糖糖。不是什么心事，就是最近有点累。",
+      "speaker": "user",
+      "delay": 3000,
+      "choices": [
+        {
+          "text": "销售工作压力大吗？",
+          "nextNode": "node_1_3",
+          "affinity": 1
+        },
+        {
+          "text": "糖糖——这名字很可爱。是你起的吗？",
+          "nextNode": "node_1_3",
+          "affinity": 3
+        },
+        {
+          "text": "\"有点累\"——愿意多说一点吗？是什么让你觉得累？",
+          "nextNode": "node_1_3",
+          "affinity": 2
+        }
+      ]
+    },
+    "node_1_3": {
+      "id": "node_1_3",
+      "content": "不是工作的事。工作还行，最近被领导表扬了，说下季度可能升职。但就是……怎么说，回家的时候，觉得累。不是身体的累，是心累。",
+      "speaker": "user",
+      "delay": 8000,
+      "choices": [
+        {
+          "text": "心累——是因为回家这件事本身让你累，还是因为家里有什么事让你累？",
+          "nextNode": "node_1_4",
+          "affinity": 2
+        },
+        {
+          "text": "你和家人的关系怎么样？",
+          "nextNode": "node_1_4",
+          "affinity": 1
+        },
+        {
+          "text": "你老婆知道你最近工作压力吗？",
+          "nextNode": "node_1_4",
+          "affinity": 0,
+          "condition": "affinity < 30"
+        }
+      ]
+    },
+    "node_1_4": {
+      "id": "node_1_4",
+      "content": "我老婆……她挺好的。就是有点……不知道怎么形容。她每天都很忙。",
+      "speaker": "user",
+      "delay": 10000,
+      "choices": [
+        {
+          "text": "忙——是工作忙，还是别的？",
+          "nextNode": "node_1_5",
+          "affinity": 2
+        },
+        {
+          "text": "你们平时交流多吗？",
+          "nextNode": "node_1_5",
+          "affinity": 1
+        },
+        {
+          "text": "听起来你可能需要更多的关心。你有尝试跟她聊过吗？",
+          "nextNode": "node_1_5",
+          "affinity": 3
+        }
+      ],
+      "keywords": ["老婆", "忙"]
+    },
+    "node_1_5": {
+      "id": "node_1_5",
+      "content": "聊过……但每次聊这个，最后都会吵架。她说我不理解她，我说她不理解我。后来就不怎么聊了。",
+      "speaker": "user",
+      "delay": 12000,
+      "choices": [
+        {
+          "text": "所以你们现在……处于一种冷战状态？",
+          "nextNode": "node_1_6",
+          "affinity": 2
+        },
+        {
+          "text": "你有没有想过，是不是你们的沟通方式有问题？",
+          "nextNode": "node_1_6",
+          "affinity": 1
+        },
+        {
+          "text": "我能理解。有时候，最亲近的人反而最难沟通。",
+          "nextNode": "node_1_6",
+          "affinity": 5,
+          "type": "success"
+        }
+      ]
+    },
+    "node_1_6": {
+      "id": "node_1_6",
+      "content": "可能是吧。有时候我就在想，要是能有一个人，就这么听我说说话，不用评判我，不用给我建议，就只是……听，就好了。",
+      "speaker": "user",
+      "delay": 15000,
+      "choices": [],
+      "endChapter": false,
+      "nextNode": "node_2_1"
+    }
+  },
+  "endings": [
+    {
+      "id": "ending_1a",
+      "title": "普通朋友",
+      "description": "你选择了较为保守的回答，叶晓阳对你的信任度一般。",
+      "condition": "affinity >= 30 and affinity < 50",
+      "image": "/images/endings/ending-1a.jpg"
+    },
+    {
+      "id": "ending_1b",
+      "title": "知心姐姐",
+      "description": "你选择了共情的回答，叶晓阳开始对你产生好感。",
+      "condition": "affinity >= 50",
+      "image": "/images/endings/ending-1b.jpg"
+    }
+  ],
+  "totalKeywords": 50,
+  "version": "1.0.0"
+}

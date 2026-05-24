@@ -301,8 +301,9 @@ const sendMessage = () => {
   showToast('自由对话功能即将上线')
 }
 
-// 返回锁屏
+// 返回锁屏（清除解锁状态）
 const goBack = () => {
+  sessionStorage.removeItem('night-city-unlocked')
   router.push('/')
 }
 

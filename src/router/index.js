@@ -6,37 +6,37 @@ const routes = [
     path: '/',
     name: 'LockScreen',
     component: () => import('@/views/LockScreen.vue'),
-    meta: { title: '夜色迷城' }
+    meta: { title: '夜色迷城', requiresAuth: false }
   },
   {
     path: '/chat',
     name: 'Chat',
     component: () => import('@/views/Chat.vue'),
-    meta: { title: '夜色迷城 - 对话' }
+    meta: { title: '夜色迷城 - 对话', requiresAuth: true }
   },
   {
     path: '/profile',
     name: 'CharacterProfile',
     component: () => import('@/views/CharacterProfile.vue'),
-    meta: { title: '夜色迷城 - 个人资料' }
+    meta: { title: '夜色迷城 - 个人资料', requiresAuth: true }
   },
   {
     path: '/gallery',
     name: 'Gallery',
     component: () => import('@/views/Gallery.vue'),
-    meta: { title: '夜色迷城 - 相册' }
+    meta: { title: '夜色迷城 - 相册', requiresAuth: true }
   },
   {
     path: '/keywords',
     name: 'KeywordGallery',
     component: () => import('@/views/KeywordGallery.vue'),
-    meta: { title: '夜色迷城 - 关键词收藏' }
+    meta: { title: '夜色迷城 - 关键词收藏', requiresAuth: true }
   },
   {
     path: '/settings',
     name: 'Settings',
     component: () => import('@/views/Settings.vue'),
-    meta: { title: '夜色迷城 - 设置' }
+    meta: { title: '夜色迷城 - 设置', requiresAuth: true }
   }
 ]
 
@@ -51,10 +51,18 @@ router.beforeEach((to, from, next) => {
   // 设置页面标题
   document.title = to.meta.title || '夜色迷城'
   
-  // 这里可以添加权限控制逻辑
-  // 例如：检查游戏状态、记录访问日志等
+  // 检查是否需要解锁
+  const isUnlocked = sessionStorage.getItem('night-city-unlocked') === 'true'
   
-  next()
+  if (to.meta.requiresAuth && !isUnlocked) {
+    // 未解锁，跳转到锁屏页
+    next({ path: '/' })
+  } else if (to.path === '/' && isUnlocked) {
+    // 已解锁访问锁屏页，直接跳转到聊天
+    next({ path: '/chat' })
+  } else {
+    next()
+  }
 })
 
 export default router

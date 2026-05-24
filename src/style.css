@@ -1,5 +1,16 @@
 /* 全局样式 - 夜色迷城 */
 :root {
+  /* 白天模式（默认） */
+  --bg-primary: #f5f5f5;
+  --bg-chat: #f5f5f5;
+  --bg-message-assistant: #ffffff;
+  --bg-message-user: #95ec69;  /* 微信绿 */
+  --text-primary: #333333;
+  --text-secondary: #999999;
+  --border-color: #e5e5e5;
+  --shadow-message: 0 1px 3px rgba(0, 0, 0, 0.1);
+  
+  /* Vant 变量 */
   --primary-color: #1989fa;
   --success-color: #07c160;
   --danger-color: #ee0a24;
@@ -8,9 +19,26 @@
   --text-color-secondary: #969799;
   --border-color: #ebedf0;
   --background-color: #f5f5f5;
-  --background-color-dark: #1a1a2e;
   --font-size: 14px;
   --border-radius: 8px;
+}
+
+/* 深夜模式（暗色系） */
+[data-theme='dark'] {
+  --bg-primary: #1a1a1a;
+  --bg-chat: #1a1a1a;
+  --bg-message-assistant: #2c2c2c;
+  --bg-message-user: #07c160;  /* 微信绿（暗色版） */
+  --text-primary: #e5e5e5;
+  --text-secondary: #888888;
+  --border-color: #333333;
+  --shadow-message: 0 1px 3px rgba(0, 0, 0, 0.3);
+  
+  /* Vant 变量（深色版） */
+  --text-color: #e5e5e5;
+  --text-color-secondary: #888888;
+  --border-color: #333333;
+  --background-color: #1a1a1a;
 }
 
 * {

@@ -64,7 +64,7 @@
       </div>
     </div>
 
-    <!-- 选择按钮区域 -->
+    <!-- 选择按钮区域（PRD规定：无自由输入，仅通过预设选项推进剧情） -->
     <div v-if="currentChoices.length > 0" class="choices-container">
       <van-button
         v-for="(choice, index) in currentChoices"
@@ -78,19 +78,10 @@
       </van-button>
     </div>
 
-    <!-- 输入区域 -->
-    <div v-else class="input-container">
-      <van-field
-        v-model="userInput"
-        placeholder="输入消息..."
-        @keyup.enter="sendMessage"
-      >
-        <template #button>
-          <van-button size="small" type="primary" @click="sendMessage">
-            发送
-          </van-button>
-        </template>
-      </van-field>
+    <!-- 无选择时显示等待提示 -->
+    <div v-else class="waiting-hint">
+      <van-loading type="spinner" size="24" />
+      <span>{{ characterName }} 正在输入...</span>
     </div>
 
     <!-- 侧边菜单 -->
@@ -103,6 +94,11 @@
         <van-cell title="个人资料" @click="goToProfile" />
         <van-cell title="相册" @click="goToGallery" />
         <van-cell title="关键词收藏" @click="goToKeywords" />
+        <van-cell title="深夜模式" @click="toggleDarkMode">
+          <template #right-icon>
+            <van-switch v-model="isDarkMode" size="20" />
+          </template>
+        </van-cell>
         <van-cell title="设置" @click="goToSettings" />
         <van-cell title="保存游戏" @click="saveGame" />
         <van-cell title="重置游戏" @click="resetGame" />
@@ -112,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, computed } from 'vue'
+import { ref, onMounted, nextTick, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast, showDialog } from 'vant'
 import DialogueEngine from '@/engine/dialogue'
@@ -126,6 +122,18 @@ const messages = ref([])
 const currentChoices = ref([])
 const isTyping = ref(false)
 const showMenu = ref(false)
+const isDarkMode = ref(false) // 深夜模式开关
+
+// 初始化
+onMounted(() => {
+  // 从 localStorage 读取主题设置
+  const savedTheme = localStorage.getItem('night-city-theme')
+  if (savedTheme === 'dark') {
+    isDarkMode.value = true
+    document.documentElement.setAttribute('data-theme', 'dark')
+  }
+  
+  // ... rest of the code
 
 // 角色信息（从游戏数据加载）
 const characterName = ref('叶晓阳')
@@ -343,31 +351,64 @@ const resetGame = () => {
     // 取消
   })
 }
+
+// 切换深夜模式
+const toggleDarkMode = () => {
+  isDarkMode.value = !isDarkMode.value
+  
+  if (isDarkMode.value) {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    localStorage.setItem('night-city-theme', 'dark')
+    showToast('已切换到深夜模式')
+  } else {
+    document.documentElement.removeAttribute('data-theme')
+    localStorage.setItem('night-city-theme', 'light')
+    showToast('已切换到白天模式')
+  }
+}
 </script>
 
 <style scoped>
+/* === 聊天容器 === */
 .chat-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: #f5f5f5;
+  background: var(--bg-primary);
+  transition: background 0.3s ease;
 }
 
+/* === 聊天消息区域 === */
 .chat-messages {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
-  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  background: var(--bg-chat);
 }
 
+/* === 消息项 === */
 .message-item {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  animation: fadeIn 0.3s ease;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === 消息气泡 === */
 .message-bubble {
   display: flex;
   gap: 12px;
-  max-width: 80%;
+  max-width: 75%;
+  align-items: flex-start;
 }
 
 .message-bubble.assistant {
@@ -379,12 +420,14 @@ const resetGame = () => {
   margin-left: auto;
 }
 
+/* === 头像 === */
 .avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;  /* 微信风格：圆角矩形，不是圆形 */
   overflow: hidden;
   flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .avatar img {
@@ -399,54 +442,93 @@ const resetGame = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #1989fa;
+  background: var(--bg-message-user);
   color: white;
-  border-radius: 50%;
+  border-radius: 8px;
+  font-size: 20px;
 }
 
+/* === 消息内容 === */
 .content {
-  background: white;
-  padding: 12px;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--bg-message-assistant);
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-message);
+  position: relative;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+/* 微信风格：消息气泡三角 */
+.message-bubble.assistant .content::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 14px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 6px solid var(--bg-message-assistant);
+}
+
+.message-bubble.user .content::before {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 14px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 6px solid var(--bg-message-user);
 }
 
 .message-bubble.user .content {
-  background: #1989fa;
-  color: white;
+  background: var(--bg-message-user);
+  color: #ffffff;
 }
 
+/* === 消息文字 === */
 .text {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.6;
+  color: var(--text-primary);
 }
 
+.message-bubble.user .text {
+  color: #ffffff;
+}
+
+/* === 关键词标签 === */
 .keywords {
   margin-top: 8px;
   display: flex;
-  gap: 4px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
+/* === "正在输入"指示器 === */
 .typing-indicator {
   display: flex;
   gap: 12px;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .dots {
   display: flex;
   gap: 4px;
   padding: 12px 16px;
-  background: white;
-  border-radius: 12px;
+  background: var(--bg-message-assistant);
+  border-radius: 8px;
+  box-shadow: var(--shadow-message);
 }
 
 .dots span {
   width: 8px;
   height: 8px;
-  background: #999;
+  background: var(--text-secondary);
   border-radius: 50%;
   animation: typing 1.4s infinite;
 }
@@ -462,16 +544,19 @@ const resetGame = () => {
 @keyframes typing {
   0%, 60%, 100% {
     transform: translateY(0);
+    opacity: 0.4;
   }
   30% {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
+    opacity: 1;
   }
 }
 
+/* === 选择按钮区域 === */
 .choices-container {
   padding: 16px;
-  background: white;
-  border-top: 1px solid #eee;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -479,14 +564,30 @@ const resetGame = () => {
 
 .choice-button {
   border-radius: 8px;
+  font-size: 15px;
+  height: 44px;
+  transition: all 0.2s ease;
 }
 
-.input-container {
-  padding: 8px;
-  background: white;
-  border-top: 1px solid #eee;
+.choice-button:active {
+  transform: scale(0.98);
+  opacity: 0.8;
 }
 
+/* === 等待提示 === */
+.waiting-hint {
+  padding: 16px;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* === 侧边菜单 === */
 .menu-content {
   padding: 16px;
 }
@@ -494,5 +595,11 @@ const resetGame = () => {
 .menu-content .van-cell {
   border-radius: 8px;
   margin-bottom: 8px;
+  transition: background 0.2s ease;
+}
+
+.menu-content .van-cell:active {
+  background: var(--border-color);
 }
 </style>
+

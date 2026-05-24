@@ -1,54 +1,61 @@
 <template>
   <div class="lock-screen">
-    <!-- 顶部消息提示 -->
+    <!-- 星空粒子背景 -->
+    <div class="stars" ref="starsContainer"></div>
+
+    <!-- 顶部消息通知 -->
     <transition name="slide-down">
-      <div v-if="showNotification" class="notification" @click="goToChat">
-        <div class="notification-header">
-          <span class="app-name">微信</span>
+      <div v-if="showNotification" class="notification" @click="onNotificationClick">
+        <div class="notification-app">
+          <van-icon name="chat-o" size="18" />
+          <span>微信</span>
+          <span class="notification-time">刚刚</span>
         </div>
-        <div class="notification-content">
-          <strong>叶晓阳：</strong>{{ notificationText }}
+        <div class="notification-body">
+          <strong>{{ characterName }}</strong>&nbsp;{{ notificationText }}
         </div>
       </div>
     </transition>
 
-    <!-- 时间显示区域 -->
-    <div class="time-display">
-      <div class="hour-minute">{{ currentHourMinute }}</div>
+    <!-- 中央时间 -->
+    <div class="time-area">
+      <div class="lock-icon">🔒</div>
+      <div class="time">{{ currentHourMinute }}</div>
       <div class="date">{{ currentDate }}</div>
     </div>
 
-    <!-- 密码输入区域 -->
-    <div class="password-section">
-      <!-- 密码输入框（4个圆圈） -->
-      <div class="password-dots">
-        <div 
-          v-for="(dot, index) in 4" 
-          :key="index"
-          :class="['dot', { filled: index < password.length, shake: isShaking }]"
-        >
-          <span v-if="index < password.length">●</span>
+    <!-- 密码区域 -->
+    <div class="password-area">
+      <div class="password-dots" :class="{ shake: isShaking }">
+        <div v-for="i in 4" :key="i" class="dot" :class="{ filled: i <= password.length }">
+          <div v-if="i <= password.length" class="dot-inner"></div>
         </div>
       </div>
-      
-      <!-- 提示文字 -->
-      <div class="password-hint">
-        {{ passwordHint }}
-      </div>
+      <div class="password-hint">{{ hintText }}</div>
     </div>
 
     <!-- 数字键盘 -->
     <div class="numpad">
-      <button 
-        v-for="key in numpadKeys" 
-        :key="key.value"
-        :class="['key', key.type || 'number']"
-        @click="handleKeyPress(key)"
+      <button
+        v-for="key in numpadKeys"
+        :key="key.label || key.type"
+        :class="['key', key.type || '']"
+        @click="onKey(key)"
       >
-        <van-icon v-if="key.type === 'delete'" name="clear" size="24" />
-        <span v-else>{{ key.label }}</span>
+        <template v-if="key.type === 'delete'">
+          <van-icon name="delete-o" size="22" />
+        </template>
+        <template v-else-if="key.type === 'empty'">
+          &nbsp;
+        </template>
+        <template v-else>
+          {{ key.label }}
+        </template>
       </button>
     </div>
+
+    <!-- 底部提示 -->
+    <div class="bottom-hint">密码：0000</div>
   </div>
 </template>
 
@@ -59,164 +66,89 @@ import { showToast } from 'vant'
 import AudioManager from '@/engine/audioManager'
 
 const router = useRouter()
-
-// 时间相关
 const now = ref(new Date())
 let timer = null
 
-// 密码相关
 const password = ref('')
-const correctPassword = '0000' // 正确密码
 const isShaking = ref(false)
-const maxPasswordLength = 4
-
-// 消息通知
 const showNotification = ref(true)
-const notificationText = ref('你到底在哪里？')
+const characterName = ref('叶晓阳')
+const notificationText = ref('在吗？')
 
-// 数字键盘布局
 const numpadKeys = [
-  { label: '1', value: '1' },
-  { label: '2', value: '2' },
-  { label: '3', value: '3' },
-  { label: '4', value: '4' },
-  { label: '5', value: '5' },
-  { label: '6', value: '6' },
-  { label: '7', value: '7' },
-  { label: '8', value: '8' },
-  { label: '9', value: '9' },
-  { type: 'empty' }, // 占位
-  { label: '0', value: '0' },
-  { type: 'delete', value: 'delete' }
+  { label: '1', sub: '' },
+  { label: '2', sub: 'ABC' },
+  { label: '3', sub: 'DEF' },
+  { label: '4', sub: 'GHI' },
+  { label: '5', sub: 'JKL' },
+  { label: '6', sub: 'MNO' },
+  { label: '7', sub: 'PQRS' },
+  { label: '8', sub: 'TUV' },
+  { label: '9', sub: 'WXYZ' },
+  { type: 'empty' },
+  { label: '0' },
+  { type: 'delete' }
 ]
 
-// 计算属性：当前时间格式化
 const currentHourMinute = computed(() => {
-  const hours = now.value.getHours()
-  const minutes = String(now.value.getMinutes()).padStart(2, '0')
-  return `${hours}:${minutes}`
+  const h = now.value.getHours().toString().padStart(2, '0')
+  const m = now.value.getMinutes().toString().padStart(2, '0')
+  return `${h}:${m}`
 })
 
 const currentDate = computed(() => {
-  const month = now.value.getMonth() + 1
-  const date = now.value.getDate()
-  const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
-  const weekday = weekdays[now.value.getDay()]
-  return `${month}月${date}日 ${weekday}`
+  const d = now.value
+  const weekdays = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六']
+  return `${d.getMonth() + 1}月${d.getDate()}日 ${weekdays[d.getDay()]}`
 })
 
-// 计算属性：密码提示文字
-const passwordHint = computed(() => {
+const hintText = computed(() => {
   if (isShaking.value) return '密码错误，请重试'
   if (password.value.length === 0) return '输入密码'
-  if (password.value.length < maxPasswordLength) return ''
   return ''
 })
 
-// 初始化
 onMounted(() => {
-  // 更新时间
-  timer = setInterval(() => {
-    now.value = new Date()
-  }, 1000)
-  
-  // 初始化音频（需要用户交互）
-  AudioManager.initAudioContext()
-  
-  // 播放标题 BGM
-  AudioManager.playBGM('title', true)
-  
-  // 检查是否有未读消息（从游戏数据读取）
-  checkUnreadMessage()
+  timer = setInterval(() => { now.value = new Date() }, 1000)
+  AudioManager.initAudioContext?.()
+  AudioManager.playBGM?.('title', true)
 })
 
 onUnmounted(() => {
   if (timer) clearInterval(timer)
 })
 
-// 检查未读消息
-const checkUnreadMessage = () => {
-  // 从 localStorage 读取游戏状态
-  const gameState = localStorage.getItem('night-city-game-state')
-  if (gameState) {
-    try {
-      const state = JSON.parse(gameState)
-      // 如果有未读消息，显示通知
-      if (state.hasUnreadMessage) {
-        showNotification.value = true
-        notificationText.value = state.lastMessage || '你到底在哪里？'
-      }
-    } catch (e) {
-      console.warn('[LockScreen] Failed to parse game state')
-    }
-  }
-}
-
-// 处理按键点击
-const handleKeyPress = (key) => {
-  AudioManager.playSFX('click')
-  
+function onKey(key) {
+  AudioManager.playSFX?.('click')
   if (key.type === 'delete') {
-    // 删除键
     password.value = password.value.slice(0, -1)
     return
   }
-  
   if (key.type === 'empty') return
-  
-  // 数字键
-  if (password.value.length < maxPasswordLength) {
-    password.value += key.value
-    
-    // 检查密码是否完整
-    if (password.value.length === maxPasswordLength) {
-      verifyPassword()
-    }
+  if (password.value.length >= 4) return
+
+  password.value += key.label
+
+  if (password.value.length === 4) {
+    setTimeout(() => {
+      if (password.value === '0000') {
+        AudioManager.playSFX?.('unlock')
+        sessionStorage.setItem('night-city-unlocked', 'true')
+        router.push('/chat')
+      } else {
+        AudioManager.playSFX?.('error')
+        isShaking.value = true
+        setTimeout(() => {
+          password.value = ''
+          isShaking.value = false
+        }, 800)
+      }
+    }, 200)
   }
 }
 
-// 验证密码
-const verifyPassword = () => {
-  setTimeout(() => {
-    if (password.value === correctPassword) {
-      // 密码正确，解锁
-      unlockSuccess()
-    } else {
-      // 密码错误，抖动动画
-      passwordError()
-    }
-  }, 200)
-}
-
-// 解锁成功
-const unlockSuccess = () => {
-  AudioManager.playSFX('unlock')
-  
-  // 标记为已解锁
-  sessionStorage.setItem('night-city-unlocked', 'true')
-  
-  // 跳转到聊天页面
-  router.push('/chat')
-}
-
-// 密码错误
-const passwordError = () => {
-  AudioManager.playSFX('error')
-  
-  // 触发抖动动画
-  isShaking.value = true
-  
-  // 清空密码
-  setTimeout(() => {
-    password.value = ''
-    isShaking.value = false
-  }, 1000)
-}
-
-// 点击通知跳转（需要先解锁）
-const goToChat = () => {
-  // 如果还没解锁，不跳转，只是提示
-  showToast('请先输入密码解锁')
+function onNotificationClick() {
+  showToast('请先解锁手机')
 }
 </script>
 
@@ -224,140 +156,148 @@ const goToChat = () => {
 .lock-screen {
   width: 100%;
   height: 100vh;
-  background: linear-gradient(180deg, #1a1a3e 0%, #2d1b69 50%, #1a1a3e 100%);
-  color: white;
+  height: 100dvh;
+  background: linear-gradient(160deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  color: #fff;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px 24px;
+  padding: 40px 20px 24px;
   box-sizing: border-box;
-  overflow: hidden;
   position: relative;
+  overflow: hidden;
+  user-select: none;
 }
 
-/* === 顶部消息通知 === */
+/* === 星空背景 === */
+.stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* === 通知 === */
 .notification {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 14px;
+  padding: 14px 16px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
 }
-
 .notification:active {
-  transform: scale(0.98);
-  opacity: 0.9;
+  transform: scale(0.97);
+  opacity: 0.85;
 }
-
-.notification-header {
-  font-size: 13px;
-  opacity: 0.7;
+.notification-app {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  opacity: 0.6;
   margin-bottom: 6px;
 }
-
-.app-name {
-  font-weight: 500;
+.notification-time {
+  margin-left: auto;
 }
-
-.notification-content {
+.notification-body {
   font-size: 15px;
   line-height: 1.5;
 }
 
-/* 通知滑入动画 */
 .slide-down-enter-active,
 .slide-down-leave-active {
-  transition: all 0.5s ease;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
 .slide-down-enter-from {
-  transform: translateY(-100%);
+  transform: translateY(-60px);
   opacity: 0;
 }
-
 .slide-down-leave-to {
-  transform: translateY(-100%);
+  transform: translateY(-60px);
   opacity: 0;
 }
 
-/* === 时间显示区域 === */
-.time-display {
-  flex: 1;
+/* === 时间区域 === */
+.time-area {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   padding: 20px 0;
 }
-
-.hour-minute {
-  font-size: 96px;
+.lock-icon {
+  font-size: 24px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+.time {
+  font-size: 86px;
   font-weight: 200;
   line-height: 1;
-  letter-spacing: -4px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: -2px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+  text-shadow: 0 0 40px rgba(255, 255, 255, 0.15);
 }
-
 .date {
-  font-size: 17px;
-  opacity: 0.7;
-  margin-top: 12px;
+  font-size: 16px;
+  opacity: 0.6;
+  margin-top: 10px;
   letter-spacing: 2px;
+  font-weight: 400;
 }
 
-/* === 密码输入区域 === */
-.password-section {
+/* === 密码 === */
+.password-area {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 0;
+  padding: 20px 0 16px;
 }
-
 .password-dots {
   display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 18px;
+  margin-bottom: 14px;
 }
-
+.password-dots.shake {
+  animation: shake 0.5s ease-in-out;
+}
 .dot {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease;
 }
-
 .dot.filled {
-  border-color: white;
+  border-color: rgba(255, 255, 255, 0.8);
 }
-
-.dot.filled span {
-  color: white;
-  font-size: 14px;
+.dot-inner {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  animation: dotPop 0.15s ease;
 }
-
-/* 抖动动画（密码错误） */
-.dot.shake {
-  animation: shake 0.5s ease-in-out;
+@keyframes dotPop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.3); }
+  100% { transform: scale(1); }
 }
-
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-10px); }
-  40% { transform: translateX(10px); }
-  60% { transform: translateX(-10px); }
-  80% { transform: translateX(10px); }
+  20% { transform: translateX(-12px); }
+  40% { transform: translateX(12px); }
+  60% { transform: translateX(-8px); }
+  80% { transform: translateX(8px); }
 }
-
 .password-hint {
   font-size: 14px;
-  opacity: 0.6;
+  opacity: 0.5;
   height: 20px;
   transition: all 0.3s ease;
 }
@@ -366,44 +306,50 @@ const goToChat = () => {
 .numpad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  padding: 20px 0;
-  max-width: 320px;
+  gap: 14px;
+  max-width: 300px;
   margin: 0 auto;
   width: 100%;
 }
-
 .key {
-  aspect-ratio: 1;
+  position: relative;
+  height: 58px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
   font-size: 28px;
   font-weight: 300;
   cursor: pointer;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s ease;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
+  transition: all 0.12s ease;
+  font-family: inherit;
 }
-
 .key:active {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.22);
+  transform: scale(0.94);
 }
-
-.key.number {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-.key.delete {
-  background: transparent;
-}
-
 .key.empty {
   visibility: hidden;
+}
+.key.delete {
+  background: transparent;
+  font-size: 22px;
+}
+.key .sub {
+  font-size: 9px;
+  letter-spacing: 2px;
+  opacity: 0.5;
+  margin-top: -2px;
+}
+
+/* === 底部 === */
+.bottom-hint {
+  text-align: center;
+  font-size: 12px;
+  opacity: 0.25;
 }
 </style>

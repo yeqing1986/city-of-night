@@ -1,581 +1,715 @@
 <template>
-  <div class="chat-container">
+  <div class="chat-page">
     <!-- 顶部导航栏 -->
     <van-nav-bar
       :title="characterName"
-      :subtitle="statusText"
       left-text="返回"
       left-arrow
       @click-left="goBack"
+      :border="false"
+      class="chat-navbar"
     >
+      <template #title>
+        <div class="navbar-title">
+          <span class="name">{{ characterName }}</span>
+          <span class="status" :class="{ online: isOnline }">
+            {{ statusText }}
+          </span>
+        </div>
+      </template>
       <template #right>
-        <van-icon name="bars" size="20" @click="showMenu = true" />
+        <van-icon name="ellipsis" size="20" color="var(--text-primary)" @click="showMenu = true" />
       </template>
     </van-nav-bar>
 
     <!-- 对话区域 -->
-    <div class="chat-messages" ref="messageContainer">
-      <div
-        v-for="(message, index) in messages"
-        :key="index"
-        :class="['message-item', message.role]"
-      >
+    <div class="chat-body" ref="messageContainer" @scroll="onScroll">
+      <!-- 日期分隔线 -->
+      <div v-if="currentDay" class="day-divider">
+        <span>{{ currentDayLabel }}</span>
+      </div>
+
+      <!-- 消息列表 -->
+      <template v-for="(msg, idx) in messages" :key="idx">
+        <!-- 时间分隔（每5条或30分钟间隔） -->
+        <div v-if="showTimeDivider(idx)" class="time-divider">
+          {{ formatTime(msg.timestamp) }}
+        </div>
+
+        <!-- 系统消息 -->
+        <div v-if="msg.role === 'system'" class="system-msg">
+          {{ msg.content }}
+        </div>
+
+        <!-- 天数过渡 -->
+        <div v-else-if="msg.role === 'day-transition'" class="day-transition">
+          <div class="day-divider"><span>{{ msg.content }}</span></div>
+        </div>
+
         <!-- AI 消息 -->
-        <div v-if="message.role === 'assistant'" class="message-bubble assistant">
-          <div class="avatar">
-            <img :src="characterAvatar" alt="avatar" />
+        <div v-else-if="msg.role === 'assistant'" class="msg-row ai">
+          <div class="avatar-wrap">
+            <img v-if="characterAvatar" :src="characterAvatar" alt="" class="avatar-img" />
+            <div v-else class="avatar-placeholder">
+              <van-icon name="friends-o" size="22" />
+            </div>
           </div>
-          <div class="content">
-            <div class="text">{{ message.content }}</div>
-            <div v-if="message.keywords && message.keywords.length > 0" class="keywords">
-              <van-tag
-                v-for="keyword in message.keywords"
-                :key="keyword"
-                type="primary"
-                size="small"
-              >
-                {{ keyword }}
-              </van-tag>
+          <div class="bubble ai-bubble">
+            <span class="triangle"></span>
+            <div class="bubble-text" v-html="msg.content.replace(/\n/g, '<br/>')"></div>
+            <div v-if="msg.keywords?.length" class="bubble-keywords">
+              <span v-for="kw in msg.keywords" :key="kw" class="kw-tag">#{{ kw }}</span>
             </div>
           </div>
         </div>
 
         <!-- 玩家消息 -->
-        <div v-else class="message-bubble user">
-          <div class="content">
-            <div class="text">{{ message.content }}</div>
+        <div v-else class="msg-row user">
+          <div class="bubble user-bubble">
+            <span class="triangle"></span>
+            <div class="bubble-text">{{ msg.content }}</div>
           </div>
-          <div class="avatar">
-            <van-icon name="user-o" size="24" />
+          <div class="avatar-wrap">
+            <div class="avatar-placeholder">
+              <van-icon name="user-o" size="22" />
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- 正在输入 -->
+      <div v-if="isTyping" class="msg-row ai typing-row">
+        <div class="avatar-wrap">
+          <img v-if="characterAvatar" :src="characterAvatar" alt="" class="avatar-img" />
+          <div v-else class="avatar-placeholder">
+            <van-icon name="friends-o" size="22" />
+          </div>
+        </div>
+        <div class="bubble ai-bubble typing-bubble">
+          <span class="triangle"></span>
+          <div class="typing-dots">
+            <i></i><i></i><i></i>
           </div>
         </div>
       </div>
 
-      <!-- 正在输入指示器 -->
-      <div v-if="isTyping" class="typing-indicator">
-        <div class="avatar">
-          <img :src="characterAvatar" alt="avatar" />
-        </div>
-        <div class="dots">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+      <!-- 底部留白 -->
+      <div class="scroll-spacer"></div>
+    </div>
+
+    <!-- 选择区域 -->
+    <transition name="slide-up">
+      <div v-if="currentChoices.length > 0" class="choices-area">
+        <button
+          v-for="(choice, i) in currentChoices"
+          :key="i"
+          class="choice-btn"
+          :class="choice.type || 'primary'"
+          @click="makeChoice(i)"
+        >
+          {{ choice.text }}
+        </button>
       </div>
-    </div>
-
-    <!-- 选择按钮区域（PRD规定：无自由输入，仅通过预设选项推进剧情） -->
-    <div v-if="currentChoices.length > 0" class="choices-container">
-      <van-button
-        v-for="(choice, index) in currentChoices"
-        :key="index"
-        block
-        class="choice-button"
-        :type="choice.type || 'primary'"
-        @click="makeChoice(index)"
-      >
-        {{ choice.text }}
-      </van-button>
-    </div>
-
-    <!-- 无选择时显示等待提示 -->
-    <div v-else class="waiting-hint">
-      <van-loading type="spinner" size="24" />
-      <span>{{ characterName }} 正在输入...</span>
-    </div>
+      <div v-else-if="isWaiting" class="waiting-area">
+        <van-loading type="spinner" size="18" />
+        <span>{{ characterName }} 正在输入...</span>
+      </div>
+    </transition>
 
     <!-- 侧边菜单 -->
-    <van-popup
-      v-model:show="showMenu"
-      position="right"
-      :style="{ width: '70%' }"
-    >
-      <div class="menu-content">
-        <van-cell title="个人资料" @click="goToProfile" />
-        <van-cell title="相册" @click="goToGallery" />
-        <van-cell title="关键词收藏" @click="goToKeywords" />
-        <van-cell title="深夜模式" @click="toggleDarkMode">
-          <template #right-icon>
-            <van-switch v-model="isDarkMode" size="20" />
-          </template>
-        </van-cell>
-        <van-cell title="设置" @click="goToSettings" />
-        <van-cell title="保存游戏" @click="saveGame" />
-        <van-cell title="重置游戏" @click="resetGame" />
+    <van-popup v-model:show="showMenu" position="right" :style="{ width: '72%' }" round>
+      <div class="menu-panel">
+        <!-- 用户信息 -->
+        <div class="menu-header">
+          <div class="menu-avatar">
+            <img v-if="characterAvatar" :src="characterAvatar" alt="" />
+            <van-icon v-else name="friends-o" size="36" />
+          </div>
+          <div class="menu-name">{{ characterName }}</div>
+          <div class="menu-desc">32岁 · 销售 · 已婚</div>
+        </div>
+
+        <!-- 数值面板 -->
+        <div class="stats-panel">
+          <div class="stat-item">
+            <span class="stat-label">共谋值</span>
+            <div class="stat-bar">
+              <div class="stat-fill complicity" :style="{ width: stats.complicity + '%' }"></div>
+            </div>
+            <span class="stat-value">{{ stats.complicity }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">道德值</span>
+            <div class="stat-bar">
+              <div class="stat-fill morality" :style="{ width: stats.morality + '%' }"></div>
+            </div>
+            <span class="stat-value">{{ stats.morality }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">怀疑值</span>
+            <div class="stat-bar">
+              <div class="stat-fill suspicion" :style="{ width: stats.suspicion + '%' }"></div>
+            </div>
+            <span class="stat-value">{{ stats.suspicion }}</span>
+          </div>
+        </div>
+
+        <!-- 功能列表 -->
+        <van-cell-group :border="false" inset>
+          <van-cell title="个人资料" icon="contact" is-link @click="navigate('/profile')" />
+          <van-cell title="相册" icon="photo-o" is-link @click="navigate('/gallery')" />
+          <van-cell title="关键词收藏" icon="label-o" is-link @click="navigate('/keywords')" />
+          <van-cell title="设置" icon="setting-o" is-link @click="navigate('/settings')" />
+        </van-cell-group>
+
+        <van-cell-group :border="false" inset style="margin-top: 12px;">
+          <van-cell title="深夜模式" icon="moon-o">
+            <template #right-icon>
+              <van-switch v-model="isDarkMode" size="20" @change="toggleDarkMode" />
+            </template>
+          </van-cell>
+          <van-cell title="保存进度" icon="passed" @click="saveGame" />
+          <van-cell title="重置游戏" icon="replay" @click="confirmReset" class="danger-cell" />
+        </van-cell-group>
       </div>
     </van-popup>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, computed, watch } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast, showDialog } from 'vant'
 import DialogueEngine from '@/engine/dialogue'
 import AudioManager from '@/engine/audioManager'
 import CollectionSystem from '@/engine/collection'
+import { useGameStore } from '@/stores/game'
 
 const router = useRouter()
+const gameStore = useGameStore()
 const messageContainer = ref(null)
-const userInput = ref('')
 const messages = ref([])
 const currentChoices = ref([])
 const isTyping = ref(false)
+const isWaiting = ref(true)
 const showMenu = ref(false)
-const isDarkMode = ref(false) // 深夜模式开关
+const isDarkMode = ref(false)
+const currentDay = ref(1)
 
-// 初始化
-onMounted(() => {
-  // 从 localStorage 读取主题设置
-  const savedTheme = localStorage.getItem('night-city-theme')
-  if (savedTheme === 'dark') {
-    isDarkMode.value = true
-    document.documentElement.setAttribute('data-theme', 'dark')
-  }
-})
-
-// 角色信息（从游戏数据加载）
 const characterName = ref('叶晓阳')
-const characterAvatar = ref('/images/avatar-ye.jpg')
-const statusText = computed(() => {
-  return `好感度: ${DialogueEngine.affinityScore}%`
+const characterAvatar = ref('')
+const isOnline = ref(true)
+
+const stats = reactive({
+  complicity: 20,
+  morality: 60,
+  suspicion: 10
 })
 
-// 初始化
+const dayLabels = {
+  1: '第1天 · 周三',
+  2: '第2天 · 周四',
+  3: '第3天 · 周五',
+  4: '第4天 · 周六'
+}
+
+const currentDayLabel = computed(() => dayLabels[currentDay.value] || `第${currentDay.value}天`)
+
+const statusText = computed(() => isOnline.value ? '在线' : '离线')
+
 onMounted(() => {
-  // 加载游戏状态
+  const savedTheme = localStorage.getItem('night-city-theme')
+  isDarkMode.value = savedTheme === 'dark'
+
+  // 加载游戏
   const loaded = DialogueEngine.loadGame()
-  
   if (!loaded) {
-    // 新游戏：加载第一章
-    loadChapter1()
+    loadChapter()
   } else {
-    // 恢复游戏：恢复消息历史
     restoreMessages()
   }
-  
-  // 播放聊天 BGM
+
   AudioManager.playBGM('chat', true)
 })
 
-// 加载第一章
-const loadChapter1 = async () => {
+// === 剧情加载 ===
+async function loadChapter() {
   try {
-    console.log('[Chat] 开始加载第一章...')
-    const response = await fetch('/data/chapter1.json')
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    const res = await fetch('/data/chapter1.json')
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const data = await res.json()
+    DialogueEngine.loadChapter(data)
+
+    // 开场白拆行显示
+    const lines = data.openingMessage.split('\n').filter(Boolean)
+    for (const line of lines) {
+      addMessage('system', line)
     }
-    
-    const chapterData = await response.json()
-    console.log('[Chat] 剧情数据加载成功:', chapterData)
-    
-    DialogueEngine.loadChapter(chapterData)
-    console.log('[Chat] DialogueEngine 加载完成')
-    
-    // 显示开场消息
-    addMessage('assistant', chapterData.openingMessage)
-    
-    // 显示第一个选择
+
+    addMessage('assistant', '你好，我是小七。睡不着——有什么心事吗？')
     showChoices()
-  } catch (error) {
-    const errorMsg = `加载剧情失败: ${error.message}`
-    showToast(errorMsg)
-    console.error('[Chat] 加载第一章失败:', error)
-    console.error('[Chat] 错误详情:', {
-      message: error.message,
-      stack: error.stack
-    })
+  } catch (err) {
+    showToast('剧情加载失败: ' + err.message)
   }
 }
 
-// 恢复消息历史
-const restoreMessages = () => {
-  // 从 DialogueEngine.history 恢复消息
+function restoreMessages() {
   const history = DialogueEngine.history
-  if (history.length === 0) {
-    loadChapter1()
-    return
-  }
-  
-  // 简化处理：只显示最后几条消息
-  const recentHistory = history.slice(-10)
-  recentHistory.forEach(item => {
-    addMessage('user', item.choiceText)
-    // 这里应该从游戏数据中获取 AI 回复，简化处理
+  if (!history.length) return loadChapter()
+
+  history.slice(-15).forEach(h => {
+    addMessage('user', h.choiceText)
     addMessage('assistant', '（继续对话...）')
   })
-  
-  // 显示当前节点的选择
   showChoices()
 }
 
-// 添加消息
-const addMessage = (role, content, keywords = []) => {
-  messages.value.push({
-    role,
-    content,
-    keywords,
-    timestamp: Date.now()
-  })
-  
-  // 滚动到底部
+// === 消息管理 ===
+function addMessage(role, content, extra = {}) {
+  messages.value.push({ role, content, timestamp: Date.now(), ...extra })
+  scrollToBottom()
+}
+
+function scrollToBottom() {
   nextTick(() => {
-    if (messageContainer.value) {
-      messageContainer.value.scrollTop = messageContainer.value.scrollHeight
-    }
+    const el = messageContainer.value
+    if (el) el.scrollTop = el.scrollHeight
   })
 }
 
-// 显示选择按钮
-const showChoices = () => {
+function showChoices() {
   const choices = DialogueEngine.getAvailableChoices()
-  currentChoices.value = choices.map(choice => ({
-    text: choice.text,
-    type: choice.type || 'primary',
-    affinity: choice.affinity || 0
-  }))
+  if (choices.length) {
+    currentChoices.value = choices.map(c => ({ text: c.text, type: c.type || 'primary', affinity: c.affinity || 0 }))
+    isWaiting.value = false
+  }
 }
 
-// 做出选择
-const makeChoice = (index) => {
-  AudioManager.playSFX('click')
-  
+// === 选择处理 ===
+async function makeChoice(index) {
+  AudioManager.playSFX?.('click')
+
   const choice = currentChoices.value[index]
-  
-  // 添加玩家消息
   addMessage('user', choice.text)
-  
-  // 清空选择
   currentChoices.value = []
-  
-  // 显示"正在输入"
+  isWaiting.value = true
   isTyping.value = true
-  
-  // 模拟 AI 思考时间
-  setTimeout(() => {
-    isTyping.value = false
-    
-    // 调用 DialogueEngine 处理选择
-    const nextNode = DialogueEngine.makeChoice(index)
-    
-    if (nextNode) {
-      // 显示 AI 回复
-      addMessage('assistant', nextNode.content, nextNode.keywords || [])
-      
-      // 收集关键词
-      if (nextNode.keywords && nextNode.keywords.length > 0) {
-        nextNode.keywords.forEach(keyword => {
-          CollectionSystem.collectKeyword(keyword, nextNode.id)
-        })
+
+  // 模拟思考延迟
+  const delay = 800 + Math.random() * 1200
+  await new Promise(r => setTimeout(r, delay))
+
+  isTyping.value = false
+
+  const nextNode = DialogueEngine.makeChoice(index)
+  if (!nextNode) return
+
+  // 天数过渡检测
+  if (nextNode.timestamp && nextNode.timestamp < '12:00' && currentDay.value > 1) {
+    currentDay.value = 0
+  }
+
+  // 天数结束
+  if (nextNode.endDay && nextNode.daySummary) {
+    currentDay.value++
+    addMessage('day-transition', dayLabels[currentDay.value] || `第${currentDay.value}天`)
+    if (nextNode.nextNode) {
+      DialogueEngine.currentNode = nextNode.nextNode
+      // 短暂延迟后继续
+      isWaiting.value = false
+      isTyping.value = true
+      await new Promise(r => setTimeout(r, 1500))
+      isTyping.value = false
+      const follow = DialogueEngine.getCurrentNode()
+      if (follow) {
+        addMessage('assistant', follow.content, { keywords: follow.keywords })
+        if (follow.statsChange) applyStats(follow.statsChange)
+        if (follow.choices?.length) showChoices()
+        else if (follow.autoNext && follow.nextNode) {
+          DialogueEngine.currentNode = follow.nextNode
+          showChoices()
+        }
       }
-      
-      // 检查是否有下一个选择
-      if (nextNode.choices && nextNode.choices.length > 0) {
-        showChoices()
-      } else if (nextNode.endChapter) {
-        // 章节结束
-        showToast('章节已完成！')
-      }
+      DialogueEngine.saveGame()
+      return
     }
-    
-    // 自动保存
-    DialogueEngine.saveGame()
-  }, 1000 + Math.random() * 1000) // 1-2 秒随机延迟
+  }
+
+  addMessage('assistant', nextNode.content, { keywords: nextNode.keywords })
+
+  // 关键词收集
+  if (nextNode.keywords?.length) {
+    nextNode.keywords.forEach(kw => CollectionSystem.collectKeyword(kw, nextNode.id))
+  }
+
+  // 数值变化
+  if (nextNode.statsChange) applyStats(nextNode.statsChange)
+
+  // 章节结束
+  if (nextNode.endChapter) {
+    addMessage('system', '—— 第一章完 ——')
+    isWaiting.value = false
+    return
+  }
+
+  // 自动跳转
+  if (nextNode.autoNext && nextNode.nextNode) {
+    DialogueEngine.currentNode = nextNode.nextNode
+    const auto = DialogueEngine.getCurrentNode()
+    if (auto) {
+      isTyping.value = true
+      await new Promise(r => setTimeout(r, 1000))
+      isTyping.value = false
+      addMessage('assistant', auto.content, { keywords: auto.keywords })
+      if (auto.statsChange) applyStats(auto.statsChange)
+      if (auto.choices?.length) showChoices()
+    }
+  } else if (nextNode.choices?.length) {
+    showChoices()
+  } else {
+    isWaiting.value = false
+  }
+
+  DialogueEngine.saveGame()
 }
 
-// 发送自由文本消息
-const sendMessage = () => {
-  if (!userInput.value.trim()) return
-  
-  AudioManager.playSFX('send')
-  
-  const text = userInput.value.trim()
-  addMessage('user', text)
-  userInput.value = ''
-  
-  // 这里可以接入 AI API 进行自由对话
-  // 当前版本只支持选择分支
-  showToast('自由对话功能即将上线')
+function applyStats(changes) {
+  if (changes.complicity) stats.complicity = Math.max(0, Math.min(100, stats.complicity + changes.complicity))
+  if (changes.morality) stats.morality = Math.max(0, Math.min(100, stats.morality + changes.morality))
+  if (changes.suspicion) stats.suspicion = Math.max(0, Math.min(100, stats.suspicion + changes.suspicion))
+  gameStore.updateStats(changes)
 }
 
-// 返回锁屏（清除解锁状态）
-const goBack = () => {
+// === 时间分隔 ===
+function showTimeDivider(idx) {
+  if (idx === 0) return true
+  const prev = messages.value[idx - 1]
+  const curr = messages.value[idx]
+  if (!prev || !curr) return false
+  // 首条或间隔 > 3 分钟
+  return curr.timestamp - prev.timestamp > 180000
+}
+
+function formatTime(ts) {
+  if (!ts) return ''
+  const d = new Date(ts)
+  const h = d.getHours().toString().padStart(2, '0')
+  const m = d.getMinutes().toString().padStart(2, '0')
+  return `${h}:${m}`
+}
+
+function onScroll() {}
+
+// === 导航 ===
+function goBack() {
   sessionStorage.removeItem('night-city-unlocked')
   router.push('/')
 }
 
-// 跳转页面
-const goToProfile = () => {
+function navigate(path) {
   showMenu.value = false
-  router.push('/profile')
+  router.push(path)
 }
 
-const goToGallery = () => {
-  showMenu.value = false
-  router.push('/gallery')
-}
-
-const goToKeywords = () => {
-  showMenu.value = false
-  router.push('/keywords')
-}
-
-const goToSettings = () => {
-  showMenu.value = false
-  router.push('/settings')
-}
-
-// 保存游戏
-const saveGame = () => {
+function saveGame() {
   DialogueEngine.saveGame()
-  showToast('游戏已保存')
+  showToast('进度已保存')
   showMenu.value = false
 }
 
-// 重置游戏
-const resetGame = () => {
+function confirmReset() {
+  showMenu.value = false
   showDialog({
     title: '确认重置',
-    message: '重置将清除所有游戏进度，是否继续？',
-    showCancelButton: true
+    message: '将清除所有进度，确定吗？',
+    showCancelButton: true,
+    confirmButtonText: '重置',
+    confirmButtonColor: 'var(--color-danger)'
   }).then(() => {
     DialogueEngine.resetGame()
     CollectionSystem.reset()
     messages.value = []
-    showMenu.value = false
-    loadChapter1()
-    showToast('游戏已重置')
-  }).catch(() => {
-    // 取消
-  })
+    currentChoices.value = []
+    stats.complicity = 20
+    stats.morality = 60
+    stats.suspicion = 10
+    currentDay.value = 1
+    loadChapter()
+    showToast('已重置')
+  }).catch(() => {})
 }
 
-// 切换深夜模式
-const toggleDarkMode = () => {
-  isDarkMode.value = !isDarkMode.value
-  
-  if (isDarkMode.value) {
-    document.documentElement.setAttribute('data-theme', 'dark')
-    localStorage.setItem('night-city-theme', 'dark')
-    showToast('已切换到深夜模式')
-  } else {
-    document.documentElement.removeAttribute('data-theme')
-    localStorage.setItem('night-city-theme', 'light')
-    showToast('已切换到白天模式')
-  }
+function toggleDarkMode() {
+  const dark = isDarkMode.value
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : '')
+  localStorage.setItem('night-city-theme', dark ? 'dark' : 'light')
+  showToast(dark ? '深夜模式' : '白天模式')
 }
 </script>
 
 <style scoped>
-/* === 聊天容器 === */
-.chat-container {
+.chat-page {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: var(--bg-primary);
-  transition: background 0.3s ease;
+  height: 100dvh;
+  background: var(--bg-chat);
+  overflow: hidden;
 }
 
-/* === 聊天消息区域 === */
-.chat-messages {
+/* === 导航栏 === */
+.chat-navbar {
+  background: var(--bg-navbar) !important;
+  border-bottom: 1px solid var(--border-color);
+}
+.navbar-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.3;
+}
+.navbar-title .name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.navbar-title .status {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.navbar-title .status.online {
+  color: var(--color-success);
+}
+
+/* === 聊天主体 === */
+.chat-body {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 16px;
+  scroll-behavior: smooth;
+}
+.scroll-spacer {
+  height: 16px;
+}
+
+/* === 日期/时间分隔线 === */
+.day-divider,
+.time-divider {
+  text-align: center;
+  margin: 16px 0;
+  position: relative;
+}
+.day-divider::before,
+.time-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border-color);
+}
+.day-divider span,
+.time-divider span {
+  position: relative;
   background: var(--bg-chat);
+  padding: 0 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.day-divider span {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 13px;
+  letter-spacing: 1px;
 }
 
-/* === 消息项 === */
-.message-item {
-  margin-bottom: 20px;
-  animation: fadeIn 0.3s ease;
+/* === 系统消息 === */
+.system-msg {
+  text-align: center;
+  margin: 8px 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 4px 12px;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* === 消息气泡 === */
-.message-bubble {
+/* === 消息行 === */
+.msg-row {
   display: flex;
-  gap: 12px;
-  max-width: 75%;
   align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 16px;
+  animation: msgIn 0.3s ease;
 }
-
-.message-bubble.assistant {
-  flex-direction: row;
-}
-
-.message-bubble.user {
+.msg-row.user {
   flex-direction: row-reverse;
-  margin-left: auto;
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* === 头像 === */
-.avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;  /* 微信风格：圆角矩形，不是圆形 */
-  overflow: hidden;
+.avatar-wrap {
   flex-shrink: 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
 }
-
-.avatar img {
+.avatar-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-
-.avatar .van-icon {
+.avatar-placeholder {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-message-user);
-  color: white;
-  border-radius: 8px;
-  font-size: 20px;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 6px;
 }
 
-/* === 消息内容 === */
-.content {
-  background: var(--bg-message-assistant);
-  padding: 12px 16px;
-  border-radius: 8px;
-  box-shadow: var(--shadow-message);
+/* === 气泡 === */
+.bubble {
+  max-width: 72%;
   position: relative;
-  max-width: 100%;
+  padding: 10px 14px;
+  border-radius: 6px;
+  line-height: 1.6;
+  font-size: 15px;
   word-break: break-word;
 }
-
-/* 微信风格：消息气泡三角 */
-.message-bubble.assistant .content::before {
-  content: '';
-  position: absolute;
-  left: -6px;
-  top: 14px;
-  width: 0;
-  height: 0;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
-  border-right: 6px solid var(--bg-message-assistant);
+.ai-bubble {
+  background: var(--bg-message-assistant);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-message);
+}
+.user-bubble {
+  background: var(--bg-message-user);
+  color: #111;
+  box-shadow: var(--shadow-message);
+}
+[data-theme='dark'] .user-bubble {
+  color: #e0e0e0;
 }
 
-.message-bubble.user .content::before {
-  content: '';
+/* 三角箭头 */
+.triangle {
   position: absolute;
-  right: -6px;
-  top: 14px;
+  top: 12px;
   width: 0;
   height: 0;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
+}
+.ai-bubble .triangle {
+  left: -6px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 6px solid var(--bg-message-assistant);
+}
+.user-bubble .triangle {
+  right: -6px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
   border-left: 6px solid var(--bg-message-user);
 }
 
-.message-bubble.user .content {
-  background: var(--bg-message-user);
-  color: #ffffff;
-}
-
-/* === 消息文字 === */
-.text {
+.bubble-text {
   font-size: 15px;
-  line-height: 1.6;
-  color: var(--text-primary);
-}
-
-.message-bubble.user .text {
-  color: #ffffff;
+  line-height: 1.65;
 }
 
 /* === 关键词标签 === */
-.keywords {
+.bubble-keywords {
   margin-top: 8px;
   display: flex;
-  gap: 6px;
   flex-wrap: wrap;
+  gap: 6px;
+}
+.kw-tag {
+  font-size: 12px;
+  color: var(--text-link);
+  opacity: 0.8;
 }
 
-/* === "正在输入"指示器 === */
-.typing-indicator {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 20px;
+/* === 正在输入 === */
+.typing-bubble {
+  padding: 14px 18px;
 }
-
-.dots {
+.typing-dots {
   display: flex;
   gap: 4px;
-  padding: 12px 16px;
-  background: var(--bg-message-assistant);
-  border-radius: 8px;
-  box-shadow: var(--shadow-message);
 }
-
-.dots span {
-  width: 8px;
-  height: 8px;
-  background: var(--text-secondary);
+.typing-dots i {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  animation: typing 1.4s infinite;
+  background: var(--text-secondary);
+  animation: bounce 1.2s infinite;
 }
+.typing-dots i:nth-child(2) { animation-delay: 0.15s; }
+.typing-dots i:nth-child(3) { animation-delay: 0.3s; }
 
-.dots span:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.dots span:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-@keyframes typing {
-  0%, 60%, 100% {
-    transform: translateY(0);
-    opacity: 0.4;
-  }
-  30% {
-    transform: translateY(-8px);
-    opacity: 1;
-  }
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
 }
 
 /* === 选择按钮区域 === */
-.choices-container {
-  padding: 16px;
+.choices-area {
+  padding: 12px 16px;
   background: var(--bg-primary);
   border-top: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
-
-.choice-button {
+.choice-btn {
+  width: 100%;
+  border: none;
+  padding: 14px 16px;
   border-radius: 8px;
   font-size: 15px;
-  height: 44px;
-  transition: all 0.2s ease;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+.choice-btn:active {
+  transform: scale(0.98);
+  opacity: 0.85;
 }
 
-.choice-button:active {
-  transform: scale(0.98);
-  opacity: 0.8;
+/* 选项类型颜色 */
+.choice-btn.primary {
+  background: var(--bg-message-assistant);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+.choice-btn.success {
+  background: rgba(7, 193, 96, 0.12);
+  color: var(--color-success);
+  border-left: 3px solid var(--color-success);
+}
+.choice-btn.warning {
+  background: rgba(255, 151, 106, 0.12);
+  color: var(--color-warning);
+  border-left: 3px solid var(--color-warning);
+}
+.choice-btn.danger {
+  background: rgba(238, 10, 36, 0.08);
+  color: var(--color-danger);
+  border-left: 3px solid var(--color-danger);
 }
 
 /* === 等待提示 === */
-.waiting-hint {
+.waiting-area {
   padding: 16px;
   background: var(--bg-primary);
   border-top: 1px solid var(--border-color);
@@ -584,22 +718,107 @@ const toggleDarkMode = () => {
   justify-content: center;
   gap: 8px;
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 /* === 侧边菜单 === */
-.menu-content {
-  padding: 16px;
+.menu-panel {
+  padding: 24px 0;
+  height: 100%;
+  overflow-y: auto;
+}
+.menu-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 24px 20px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+.menu-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.menu-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.menu-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.menu-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
 }
 
-.menu-content .van-cell {
-  border-radius: 8px;
-  margin-bottom: 8px;
-  transition: background 0.2s ease;
+/* 数值面板 */
+.stats-panel {
+  padding: 16px 20px;
+  margin-bottom: 16px;
 }
-
-.menu-content .van-cell:active {
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.stat-item:last-child { margin-bottom: 0; }
+.stat-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  width: 52px;
+  flex-shrink: 0;
+}
+.stat-bar {
+  flex: 1;
+  height: 6px;
   background: var(--border-color);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.stat-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+.stat-fill.complicity { background: var(--bar-complicity); }
+.stat-fill.morality { background: var(--bar-morality); }
+.stat-fill.suspicion { background: var(--bar-suspicion); }
+.stat-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  width: 28px;
+  text-align: right;
+}
+
+.danger-cell :deep(.van-cell__title) {
+  color: var(--color-danger) !important;
+}
+
+/* === 底部动画 === */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.slide-up-enter-from {
+  transform: translateY(100%);
+  opacity: 0;
+}
+.slide-up-leave-to {
+  transform: translateY(20px);
+  opacity: 0;
 }
 </style>
-

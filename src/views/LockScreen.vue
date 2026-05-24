@@ -19,7 +19,7 @@
     <!-- 解锁按钮 -->
     <div class="unlock-button" @click="unlock">
       <van-icon name="arrow-up" size="24" />
-      <span>上滑解锁</span>
+      <span>点击进入</span>
     </div>
 
     <!-- 底部提示 -->

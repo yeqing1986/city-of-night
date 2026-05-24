@@ -154,9 +154,18 @@ onMounted(() => {
 // 加载第一章
 const loadChapter1 = async () => {
   try {
+    console.log('[Chat] 开始加载第一章...')
     const response = await fetch('/data/chapter1.json')
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    
     const chapterData = await response.json()
+    console.log('[Chat] 剧情数据加载成功:', chapterData)
+    
     DialogueEngine.loadChapter(chapterData)
+    console.log('[Chat] DialogueEngine 加载完成')
     
     // 显示开场消息
     addMessage('assistant', chapterData.openingMessage)
@@ -164,8 +173,13 @@ const loadChapter1 = async () => {
     // 显示第一个选择
     showChoices()
   } catch (error) {
-    showToast('加载剧情失败，请检查数据文件')
+    const errorMsg = `加载剧情失败: ${error.message}`
+    showToast(errorMsg)
     console.error('[Chat] 加载第一章失败:', error)
+    console.error('[Chat] 错误详情:', {
+      message: error.message,
+      stack: error.stack
+    })
   }
 }
 

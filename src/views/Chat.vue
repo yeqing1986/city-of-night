@@ -655,7 +655,7 @@ function toggleDarkMode() {
 
 /* === 选择按钮区域 === */
 .choices-area {
-  padding: 12px 16px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
   background: var(--bg-primary);
   border-top: 1px solid var(--border-color);
   display: flex;
@@ -703,7 +703,7 @@ function toggleDarkMode() {
 
 /* === 等待提示 === */
 .waiting-area {
-  padding: 16px;
+  padding: 16px calc(16px + env(safe-area-inset-bottom));
   background: var(--bg-primary);
   border-top: 1px solid var(--border-color);
   display: flex;

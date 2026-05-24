@@ -162,7 +162,7 @@ function onNotificationClick() {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 40px 20px 24px;
+  padding: 40px 20px calc(24px + env(safe-area-inset-bottom));
   box-sizing: border-box;
   position: relative;
   overflow: hidden;

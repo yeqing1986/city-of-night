@@ -132,8 +132,7 @@ onMounted(() => {
     isDarkMode.value = true
     document.documentElement.setAttribute('data-theme', 'dark')
   }
-  
-  // ... rest of the code
+})
 
 // 角色信息（从游戏数据加载）
 const characterName = ref('叶晓阳')

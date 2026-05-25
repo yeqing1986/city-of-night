@@ -296,18 +296,24 @@ function goBack() {
   border-radius: 10px;
 }
 
-/* 关键词列表 */
+/* 关键词列表 - 3列网格 */
 .keyword-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
 .keyword-item {
   background: var(--bg-secondary);
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 10px 10px;
   cursor: pointer;
   transition: transform 0.15s ease, background 0.15s ease;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 .keyword-item:active:not(.locked) {
   transform: scale(0.98);
@@ -319,15 +325,16 @@ function goBack() {
 }
 
 .kw-text {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-primary);
   margin-bottom: 4px;
+  word-break: break-all;
 }
 .kw-context {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;

@@ -31,7 +31,7 @@
 
       <!-- 消息列表 -->
       <template v-for="(msg, idx) in messages" :key="idx">
-        <!-- 时间分隔（每5条或30分钟间隔） -->
+        <!-- 时间分隔 -->
         <div v-if="showTimeDivider(idx)" class="time-divider">
           {{ formatTime(msg.timestamp) }}
         </div>
@@ -62,9 +62,6 @@
           <div class="bubble ai-bubble">
             <span class="triangle ai-tri"></span>
             <div class="bubble-text" v-html="msg.content.replace(/\n/g, '<br/>')"></div>
-            <div v-if="msg.keywords?.length" class="bubble-keywords">
-              <span v-for="kw in msg.keywords" :key="kw" class="kw-tag">#{{ kw }}</span>
-            </div>
           </div>
           <div class="avatar-wrap">
             <img :src="aiAvatar" alt="" class="avatar-img" />
@@ -153,7 +150,7 @@
           <van-cell title="关于" icon="info-o" is-link @click="showAbout = true" />
         </van-cell-group>
 
-        <!-- 人物列表（点击展开详情） -->
+        <!-- 人物列表 -->
         <div class="characters-section" v-if="characters.length">
           <div class="section-title">人物</div>
           <div class="characters-grid">
@@ -191,8 +188,8 @@
     <van-dialog 
       v-model:show="showAbout" 
       title="关于" 
-      :showConfirmButton="true"
-      confirmButtonText="我知道了"
+      :show-confirm-button="true"
+      confirm-button-text="我知道了"
     >
       <div class="about-content">
         <div class="about-logo">🌙</div>
@@ -212,12 +209,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, nextTick, watch } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast, showDialog } from 'vant'
 import DialogueEngine from '@/engine/dialogue'
 import AudioManager from '@/engine/audioManager'
-import CollectionSystem from '@/engine/collection'
 import { useGameStore } from '@/stores/game'
 
 const router = useRouter()
@@ -237,18 +233,18 @@ const aiAvatar = ref('/images/avatar-ai.png')
 const isOnline = ref(true)
 const showAbout = ref(false)
 
-// 人物数据（章节中逐渐解锁）
+// 人物数据
 const characters = ref([
-  { id: 'ye', name: '叶晓阳', title: '32岁 · 销售 · 已婚', avatar: '/images/avatar-ye.png', unlocked: true, bio: '主角，三十二岁，在H城做销售。已婚，有一个三岁的女儿糖糖。近来感到婚姻中的孤独，下载了"深夜树洞"这款AI倾诉软件。' },
-  { id: 'zhou', name: '周颖', title: '神秘的邻居', avatar: '/images/avatar-zhou.png', unlocked: false, bio: '叶晓阳的新邻居，一个神秘的女性。独自住在对门，似乎有着和叶晓阳相似的孤独感。两人的关系随着剧情发展逐渐加深...' },
-  { id: 'wife', name: '叶晓阳的妻子', title: '糖糖妈妈', avatar: '/images/avatar-wife.png', unlocked: false, bio: '叶晓阳的妻子，每天忙碌于工作和照顾女儿糖糖。与叶晓阳的交流越来越少，两人的关系日渐疏远。' },
-  { id: 'tang', name: '糖糖', title: '3岁', avatar: '/images/avatar-tang.png', unlocked: false, bio: '叶晓阳的女儿，三岁。家庭关系的纽带，也是叶晓阳心中最柔软的部分。' }
+  { id: 'ye', name: '叶晓阳', title: '32岁 · 销售 · 已婚', avatar: '/images/avatar-ye.png', unlocked: true, bio: '主角，三十二岁，在H城做销售。已婚，有一个三岁的女儿糖糖。' },
+  { id: 'zhou', name: '周颖', title: '神秘的邻居', avatar: '/images/avatar-zhou.png', unlocked: false, bio: '叶晓阳的新邻居，一个神秘的女性。' },
+  { id: 'wife', name: '叶晓阳的妻子', title: '糖糖妈妈', avatar: '/images/avatar-wife.png', unlocked: false, bio: '叶晓阳的妻子，每天忙碌于工作和照顾女儿糖糖。' },
+  { id: 'tang', name: '糖糖', title: '3岁', avatar: '/images/avatar-tang.png', unlocked: false, bio: '叶晓阳的女儿，三岁。' }
 ])
 
 const stats = reactive({
-  complicity: 20,
-  morality: 60,
-  suspicion: 10
+  共谋值: 20,
+  道德值: 60,
+  怀疑值: 10
 })
 
 const dayLabels = {
@@ -259,7 +255,6 @@ const dayLabels = {
 }
 
 const currentDayLabel = computed(() => dayLabels[currentDay.value] || `第${currentDay.value}天`)
-
 const statusText = computed(() => isOnline.value ? '在线' : '离线')
 
 onMounted(() => {
@@ -269,123 +264,192 @@ onMounted(() => {
   // 加载游戏
   const loaded = DialogueEngine.loadGame()
   
-  // Bug修复: loadGame只恢复了currentNode，必须重新加载章节JSON
-  if (loaded && DialogueEngine.currentNode) {
-    loadChapter().then(() => {
-      restoreMessages()
-    })
+  if (loaded && DialogueEngine.chapterData) {
+    // 恢复：直接跳到保存的位置
+    restoreGameState()
   } else {
+    // 新游戏：加载剧本
     loadChapter()
   }
 
-  // Bug修复: 恢复BGM状态（AudioManager刷新后会重新初始化，需要从localStorage读取）
+  // 恢复BGM
   const savedBGM = localStorage.getItem('night-city-bgm')
   AudioManager.playBGM(savedBGM || 'chat', true)
 })
 
-// === 剧情加载 ===
-// restoreMode: true 时只加载数据不添加消息，由 restoreMessages() 接管消息显示
-async function loadChapter(restoreMode = false) {
+// === 加载剧本 ===
+async function loadChapter() {
   try {
-    const res = await fetch('/data/chapter1_nodes.json')
+    const res = await fetch('/data/chapter1.json')
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = await res.json()
+    
     DialogueEngine.loadChapter(data)
 
-    if (restoreMode) return // 恢复模式下不添加消息，由 restoreMessages() 接管
-
-    // 从第一个节点开始播放
-    const firstNode = DialogueEngine.getCurrentNode()
-    if (firstNode) {
-      if (firstNode.content) {
-        addMessage(firstNode.role, firstNode.content)
-      }
-      // 自动播放后续无选择节点
-      autoPlay()
-    } else {
-      addMessage('system', '剧情开始')
+    // 显示第一条消息
+    DialogueEngine.currentMessageIdx = 0
+    const firstMsg = DialogueEngine.getCurrentMessage()
+    if (firstMsg?.content) {
+      addMessage(firstMsg)
     }
+
+    // 显示选项（如果有）
     showChoices()
   } catch (err) {
     showToast('剧情加载失败: ' + err.message)
   }
 }
 
-// 根据消息长度计算等待时间（参考DLine的WaitTime：更长的等待更真实）
+// === 恢复游戏状态 ===
+function restoreGameState() {
+  // 重建消息历史
+  const history = DialogueEngine.history
+  
+  if (history.length === 0) {
+    // 无历史：显示当前消息
+    const msg = DialogueEngine.getCurrentMessage()
+    if (msg?.content) {
+      addMessage(msg)
+    }
+    showChoices()
+    return
+  }
+
+  // 重建历史消息（简化版：只显示最后几条）
+  for (const h of history.slice(-10)) {
+    // 显示AI回复
+    const msg = DialogueEngine.chapterData.scenes[h.sceneIdx]?.messages[h.messageIdx]
+    if (msg?.content) {
+      addMessage(msg)
+    }
+    // 显示玩家选择
+    addMessage({ speaker: '叶晓阳', content: h.choiceText }, 'user')
+  }
+
+  // 显示当前消息
+  const currentMsg = DialogueEngine.getCurrentMessage()
+  if (currentMsg?.content) {
+    addMessage(currentMsg)
+  }
+
+  // 显示选项
+  showChoices()
+}
+
+// === 显示选项 ===
+function showChoices() {
+  const choices = DialogueEngine.getAvailableChoices()
+  if (choices.length) {
+    currentChoices.value = choices.map(c => ({ text: c.text, type: c.type || 'primary' }))
+    isWaiting.value = false
+  } else {
+    // 无选项，自动推进
+    autoPlay()
+  }
+}
+
+// === 自动播放（无选择时） ===
+async function autoPlay() {
+  let msg = DialogueEngine.getCurrentMessage()
+  
+  while (msg && !msg.choices?.length) {
+    // 显示消息
+    isTyping.value = true
+    await delay(600 + Math.random() * 400)
+    isTyping.value = false
+    
+    addMessage(msg)
+    await delay(calcWaitTime(msg.content))
+    
+    // 推进到下一条
+    DialogueEngine.advance()
+    msg = DialogueEngine.getCurrentMessage()
+  }
+  
+  // 显示选项（如果有）
+  if (msg?.choices?.length) {
+    showChoices()
+  } else if (!msg) {
+    isWaiting.value = false
+    addMessage({ speaker: 'system', content: '（剧情结束）' })
+  }
+}
+
+// === 选择处理 ===
+async function makeChoice(index) {
+  AudioManager.playSFX?.('click')
+
+  const choice = currentChoices.value[index]
+  addMessage({ speaker: '叶晓阳', content: choice.text }, 'user')
+  
+  currentChoices.value = []
+  isWaiting.value = true
+  isTyping.value = true
+
+  // 模拟思考延迟
+  await delay(800 + Math.random() * 1200)
+  isTyping.value = false
+
+  // 应用选择
+  const nextMsg = DialogueEngine.makeChoice(index)
+  
+  // 更新数值显示
+  updateStatsDisplay()
+
+  // 保存
+  DialogueEngine.saveGame()
+
+  // 显示下一条消息
+  if (nextMsg?.content) {
+    addMessage(nextMsg)
+    await delay(calcWaitTime(nextMsg.content))
+  }
+
+  // 继续自动播放或显示选项
+  if (!nextMsg?.choices?.length) {
+    DialogueEngine.advance()
+    autoPlay()
+  } else {
+    showChoices()
+  }
+}
+
+// === 添加消息 ===
+function addMessage(msgData, forceRole = null) {
+  const role = forceRole || (msgData.speaker === 'AI' ? 'assistant' : 'user')
+  const content = msgData.content || ''
+  
+  messages.value.push({
+    role,
+    content,
+    timestamp: Date.now()
+  })
+
+  // 同步最新AI消息
+  if (role === 'assistant') {
+    gameStore.lastAssistantMessage = content
+  }
+
+  scrollToBottom()
+}
+
+// === 更新数值显示 ===
+function updateStatsDisplay() {
+  const engineStats = DialogueEngine.getStats()
+  stats.共谋值 = engineStats.共谋值 || 20
+  stats.道德值 = engineStats.道德值 || 60
+  stats.怀疑值 = engineStats.怀疑值 || 10
+}
+
+// === 工具函数 ===
 function calcWaitTime(content) {
   if (!content) return 1500
-  // 每字40ms，上限5秒，最少1.5秒
   const base = Math.max(1500, Math.min(content.length * 40, 5000))
   return base + 400 + Math.random() * 600
 }
 
-// 重建消息历史（带打字等待效果）
-// 重建消息历史（带打字等待效果）
-async function restoreMessages() {
-  // 重新加载章节数据（不添加消息，由本函数接管）
-  await loadChapter(true)
-  
-  const history = DialogueEngine.history
-  
-  if (!history.length) {
-    // 无历史：从第一个节点开始
-    const firstNode = DialogueEngine.getCurrentNode()
-    if (firstNode?.content) {
-      addMessage(firstNode.role || 'assistant', firstNode.content, { keywords: firstNode.keywords || [] })
-    }
-    autoPlay()
-    return
-  }
-
-  // === 从头重建消息历史 ===
-  // 显示第一条AI消息
-  const firstNode = DialogueEngine.getCurrentNode()
-  if (firstNode?.content) {
-    isTyping.value = true
-    await new Promise(r => setTimeout(r, 600 + Math.random() * 400))
-    isTyping.value = false
-    addMessage(firstNode.role || 'assistant', firstNode.content, { keywords: firstNode.keywords || [] })
-    await new Promise(r => setTimeout(r, calcWaitTime(firstNode.content)))
-  }
-
-  // 逐条重建历史（每条：AI等待 → AI消息 → 阅读时间 → 玩家消息 → 短暂停顿）
-  for (const h of history) {
-    isTyping.value = true
-    await new Promise(r => setTimeout(r, 600 + Math.random() * 400))
-    isTyping.value = false
-    
-    const node = DialogueEngine.currentChapter?.nodes[h.nodeId]
-    if (node?.content) {
-      addMessage(node.role || 'assistant', node.content, { keywords: node.keywords || [] })
-      await new Promise(r => setTimeout(r, calcWaitTime(node.content)))
-    }
-    
-    addMessage('user', h.choiceText)
-    await new Promise(r => setTimeout(r, 300))
-    
-    DialogueEngine.currentNode = h.nodeId
-  }
-
-  // 定位到当前节点并显示选项
-  DialogueEngine.currentNode = history[history.length - 1]?.nodeId
-  const currentNode = DialogueEngine.getCurrentNode()
-  
-  if (currentNode?.choices?.length) {
-    showChoices()
-  } else {
-    isWaiting.value = false
-    addMessage('system', '（剧情结束）')
-  }
-}
-
-// === 消息管理 ===
-function addMessage(role, content, extra = {}) {
-  messages.value.push({ role, content, timestamp: Date.now(), ...extra })
-  // 同步最新AI消息到store，供锁屏通知使用
-  if (role === 'assistant') {
-    gameStore.lastAssistantMessage = content
-  }
-  scrollToBottom()
+function delay(ms) {
+  return new Promise(r => setTimeout(r, ms))
 }
 
 function scrollToBottom() {
@@ -395,141 +459,18 @@ function scrollToBottom() {
   })
 }
 
-function showChoices() {
-  const choices = DialogueEngine.getAvailableChoices()
-  if (choices.length) {
-    currentChoices.value = choices.map(c => ({ text: c.text, type: c.type || 'primary', affinity: c.affinity || 0 }))
-    isWaiting.value = false
-  } else {
-    // 无选择但有nextNode，自动播放
-    autoPlay()
-  }
-}
-
-// 自动播放无选择的节点链
-async function autoPlay() {
-  let node = DialogueEngine.getCurrentNode()
-  while (node && !node.choices?.length && node.nextNode) {
-    isTyping.value = true
-    await new Promise(r => setTimeout(r, 600 + Math.random() * 400))
-    isTyping.value = false
-    
-    if (node.content) {
-      addMessage(node.role || 'assistant', node.content, { keywords: node.keywords || [] })
-      // 等待阅读时间（根据内容长度）
-      await new Promise(r => setTimeout(r, calcWaitTime(node.content)))
-    }
-    
-    // 更新天数
-    if (node.day && node.day !== currentDay.value) {
-      currentDay.value = node.day
-    }
-    
-    // 推进到下一节点
-    DialogueEngine.currentNode = node.nextNode
-    node = DialogueEngine.getCurrentNode()
-  }
-  
-  // 最后一个节点有内容则显示
-  if (node && node.content) {
-    isTyping.value = true
-    await new Promise(r => setTimeout(r, 600 + Math.random() * 400))
-    isTyping.value = false
-    addMessage(node.role || 'assistant', node.content, { keywords: node.keywords || [] })
-  }
-  
-  // 有选择则显示
-  if (node?.choices?.length) {
-    showChoices()
-  } else {
-    isWaiting.value = false
-    addMessage('system', '（剧情结束）')
-  }
-}
-
-// === 选择处理 ===
-async function makeChoice(index) {
-  AudioManager.playSFX?.('click')
-
-  const choice = currentChoices.value[index]
-  addMessage('user', choice.text)
-  currentChoices.value = []
-  isWaiting.value = true
-  isTyping.value = true
-
-  // 模拟思考延迟（选完选项后的等待）
-  await new Promise(r => setTimeout(r, 800 + Math.random() * 1200))
-  isTyping.value = false
-
-  const nextNode = DialogueEngine.makeChoice(index)
-  if (!nextNode) return
-
-  // 天数过渡
-  if (nextNode.day && nextNode.day !== currentDay.value) {
-    currentDay.value = nextNode.day
-    addMessage('day-transition', `第${nextNode.day}天`)
-  }
-
-  // 关键词收集
-  if (nextNode.keywords?.length) {
-    nextNode.keywords.forEach(kw => CollectionSystem.collectKeyword(kw, nextNode.id))
-  }
-
-  // 数值变化
-  if (nextNode.statsChange) applyStats(nextNode.statsChange)
-
-  // 章节结束
-  if (nextNode.endChapter) {
-    addMessage('system', '—— 第一章完 ——')
-    isWaiting.value = false
-    DialogueEngine.saveGame()
-    return
-  }
-
-  // 显示AI回复（如果有）
-  if (nextNode.content) {
-    addMessage(nextNode.role || 'assistant', nextNode.content, { keywords: nextNode.keywords || [] })
-    // 根据内容长度等待阅读时间
-    await new Promise(r => setTimeout(r, calcWaitTime(nextNode.content)))
-  }
-
-  // 自动播放后续节点
-  if (!nextNode.choices?.length && nextNode.nextNode) {
-    DialogueEngine.currentNode = nextNode.nextNode
-    autoPlay()
-  } else if (nextNode.choices?.length) {
-    showChoices()
-  } else {
-    isWaiting.value = false
-    addMessage('system', '（剧情结束）')
-  }
-
-  DialogueEngine.saveGame()
-}
-
-function applyStats(changes) {
-  if (changes.complicity) stats.complicity = Math.max(0, Math.min(100, stats.complicity + changes.complicity))
-  if (changes.morality) stats.morality = Math.max(0, Math.min(100, stats.morality + changes.morality))
-  if (changes.suspicion) stats.suspicion = Math.max(0, Math.min(100, stats.suspicion + changes.suspicion))
-  gameStore.updateStats(changes)
-}
-
-// === 时间分隔 ===
 function showTimeDivider(idx) {
   if (idx === 0) return true
   const prev = messages.value[idx - 1]
   const curr = messages.value[idx]
   if (!prev || !curr) return false
-  // 首条或间隔 > 3 分钟
   return curr.timestamp - prev.timestamp > 180000
 }
 
 function formatTime(ts) {
   if (!ts) return ''
   const d = new Date(ts)
-  const h = d.getHours().toString().padStart(2, '0')
-  const m = d.getMinutes().toString().padStart(2, '0')
-  return `${h}:${m}`
+  return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
 }
 
 function onScroll() {}
@@ -556,7 +497,6 @@ function selectCharacter(char) {
     showToast('该人物尚未解锁')
     return
   }
-  // 跳转到人物详情页或显示弹窗
   router.push('/profile')
 }
 
@@ -570,12 +510,11 @@ function confirmReset() {
     confirmButtonColor: 'var(--color-danger)'
   }).then(() => {
     DialogueEngine.resetGame()
-    CollectionSystem.reset()
     messages.value = []
     currentChoices.value = []
-    stats.complicity = 20
-    stats.morality = 60
-    stats.suspicion = 10
+    stats.共谋值 = 20
+    stats.道德值 = 60
+    stats.怀疑值 = 10
     currentDay.value = 1
     loadChapter()
     showToast('已重置')
@@ -685,11 +624,9 @@ function toggleDarkMode() {
   margin-bottom: 16px;
   animation: msgIn 0.3s ease;
 }
-/* 叶晓阳在左侧 */
 .msg-row.user {
   flex-direction: row;
 }
-/* AI在右侧 */
 .msg-row.ai {
   flex-direction: row-reverse;
 }
@@ -711,16 +648,6 @@ function toggleDarkMode() {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-.avatar-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-primary);
-  color: #fff;
-  border-radius: 6px;
 }
 
 /* === 气泡 === */
@@ -754,37 +681,17 @@ function toggleDarkMode() {
   width: 0;
   height: 0;
 }
-/* AI气泡（右侧）：三角形在左侧，指向左边 */
 .ai-bubble .ai-tri {
   left: -6px;
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
   border-right: 6px solid var(--bg-message-assistant);
 }
-/* 叶晓阳气泡（左侧）：三角形在右侧，指向右边 */
 .user-bubble .user-tri {
   right: -6px;
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
   border-left: 6px solid var(--bg-message-user);
-}
-
-.bubble-text {
-  font-size: 15px;
-  line-height: 1.65;
-}
-
-/* === 关键词标签 === */
-.bubble-keywords {
-  margin-top: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.kw-tag {
-  font-size: 12px;
-  color: var(--text-link);
-  opacity: 0.8;
 }
 
 /* === 正在输入 === */
@@ -835,8 +742,6 @@ function toggleDarkMode() {
   transform: scale(0.98);
   opacity: 0.85;
 }
-
-/* 选项类型颜色 */
 .choice-btn.primary {
   background: var(--bg-message-assistant);
   color: var(--text-primary);

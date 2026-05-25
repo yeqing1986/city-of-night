@@ -62,6 +62,9 @@ class AudioManager {
   playBGM(bgmName, fadeIn = true) {
     if (this.isMuted) return
     
+    // 持久化BGM名称到localStorage
+    localStorage.setItem('night-city-bgm', bgmName)
+    
     const bgmPath = this.audioFiles.bgm[bgmName]
     if (!bgmPath) {
       console.error(`[AudioManager] BGM 不存在: ${bgmName}`)

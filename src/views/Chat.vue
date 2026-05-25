@@ -268,13 +268,19 @@ onMounted(() => {
 
   // 加载游戏
   const loaded = DialogueEngine.loadGame()
-  if (!loaded) {
-    loadChapter()
+  
+  // Bug修复: loadGame只恢复了currentNode，必须重新加载章节JSON
+  if (loaded && DialogueEngine.currentNode) {
+    loadChapter().then(() => {
+      restoreMessages()
+    })
   } else {
-    restoreMessages()
+    loadChapter()
   }
 
-  AudioManager.playBGM('chat', true)
+  // Bug修复: 恢复BGM状态（AudioManager刷新后会重新初始化，需要从localStorage读取）
+  const savedBGM = localStorage.getItem('night-city-bgm')
+  AudioManager.playBGM(savedBGM || 'chat', true)
 })
 
 // === 剧情加载 ===
@@ -302,15 +308,57 @@ async function loadChapter() {
   }
 }
 
-function restoreMessages() {
-  const history = DialogueEngine.history
-  if (!history.length) return loadChapter()
+// 根据消息长度计算等待时间（DLine的WaitTime思路）
+function calcWaitTime(content) {
+  if (!content) return 800
+  const base = Math.min(content.length * 20, 3000) // 每字20ms，上限3秒
+  return base + 400 + Math.random() * 400
+}
 
-  history.slice(-15).forEach(h => {
+// 重建消息历史（带打字等待效果）
+async function restoreMessages() {
+  // 先重新加载章节数据（loadGame只恢复了currentNode）
+  await loadChapter()
+  
+  const history = DialogueEngine.history
+  if (!history.length) {
+    showChoices()
+    return
+  }
+
+  // 从头重建消息历史，模拟真实打字效果
+  for (const h of history) {
+    // 等待（模拟对方正在输入）
+    isTyping.value = true
+    await new Promise(r => setTimeout(r, 600 + Math.random() * 400))
+    isTyping.value = false
+    
+    // 显示AI消息（如果存在）
+    const node = DialogueEngine.currentChapter?.nodes[h.nodeId]
+    if (node?.content) {
+      addMessage(node.role || 'assistant', node.content, { keywords: node.keywords || [] })
+      // 消息显示后等待阅读时间
+      await new Promise(r => setTimeout(r, calcWaitTime(node.content)))
+    }
+    
+    // 显示玩家选择
     addMessage('user', h.choiceText)
-    addMessage('assistant', '（继续对话...）')
-  })
-  showChoices()
+    // 玩家消息后短暂等待再继续
+    await new Promise(r => setTimeout(r, 300))
+    
+    // 恢复到最后节点
+    DialogueEngine.currentNode = h.nodeId
+  }
+
+  // 恢复到最后节点并显示选项
+  DialogueEngine.currentNode = history[history.length - 1]?.nodeId
+  const currentNode = DialogueEngine.getCurrentNode()
+  if (currentNode?.choices?.length) {
+    showChoices()
+  } else {
+    isWaiting.value = false
+    addMessage('system', '（剧情结束）')
+  }
 }
 
 // === 消息管理 ===
@@ -351,6 +399,8 @@ async function autoPlay() {
     
     if (node.content) {
       addMessage(node.role || 'assistant', node.content, { keywords: node.keywords || [] })
+      // 等待阅读时间（根据内容长度）
+      await new Promise(r => setTimeout(r, calcWaitTime(node.content)))
     }
     
     // 更新天数
@@ -390,7 +440,7 @@ async function makeChoice(index) {
   isWaiting.value = true
   isTyping.value = true
 
-  // 模拟思考延迟
+  // 模拟思考延迟（选完选项后的等待）
   await new Promise(r => setTimeout(r, 800 + Math.random() * 1200))
   isTyping.value = false
 
@@ -415,20 +465,26 @@ async function makeChoice(index) {
   if (nextNode.endChapter) {
     addMessage('system', '—— 第一章完 ——')
     isWaiting.value = false
+    DialogueEngine.saveGame()
     return
+  }
+
+  // 显示AI回复（如果有）
+  if (nextNode.content) {
+    addMessage(nextNode.role || 'assistant', nextNode.content, { keywords: nextNode.keywords || [] })
+    // 根据内容长度等待阅读时间
+    await new Promise(r => setTimeout(r, calcWaitTime(nextNode.content)))
   }
 
   // 自动播放后续节点
   if (!nextNode.choices?.length && nextNode.nextNode) {
-    addMessage(nextNode.role || 'assistant', nextNode.content, { keywords: nextNode.keywords || [] })
     DialogueEngine.currentNode = nextNode.nextNode
     autoPlay()
   } else if (nextNode.choices?.length) {
-    addMessage(nextNode.role || 'assistant', nextNode.content, { keywords: nextNode.keywords || [] })
     showChoices()
   } else {
-    addMessage(nextNode.role || 'assistant', nextNode.content, { keywords: nextNode.keywords || [] })
     isWaiting.value = false
+    addMessage('system', '（剧情结束）')
   }
 
   DialogueEngine.saveGame()

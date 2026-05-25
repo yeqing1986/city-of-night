@@ -67,7 +67,7 @@
             <div class="bubble-text">{{ msg.content }}</div>
           </div>
           <div class="avatar-wrap">
-            <img :src="aiAvatar" alt="" class="avatar-img" />
+            <img :src="characterAvatar" alt="" class="avatar-img" />
           </div>
         </div>
       </template>
@@ -151,7 +151,24 @@
           <van-cell title="相册" icon="photo-o" is-link @click="navigate('/gallery')" />
           <van-cell title="关键词收藏" icon="label-o" is-link @click="navigate('/keywords')" />
           <van-cell title="设置" icon="setting-o" is-link @click="navigate('/settings')" />
+          <van-cell title="关于" icon="info-o" is-link @click="showAbout = true" />
         </van-cell-group>
+
+        <!-- 人物列表（点击展开详情） -->
+        <div class="characters-section" v-if="characters.length">
+          <div class="section-title">人物</div>
+          <div class="characters-grid">
+            <div 
+ v-for="char in characters" 
+              :key="char.id" 
+              class="char-item"
+              @click="selectCharacter(char)"
+            >
+              <img :src="char.avatar" :alt="char.name" class="char-avatar" />
+              <div class="char-name">{{ char.name }}</div>
+            </div>
+          </div>
+        </div>
 
         <van-cell-group :border="false" inset style="margin-top: 12px;">
           <van-cell title="深夜模式" icon="moon-o">
@@ -164,6 +181,28 @@
         </van-cell-group>
       </div>
     </van-popup>
+
+    <!-- 关于弹窗 -->
+    <van-dialog 
+      v-model:show="showAbout" 
+      title="关于" 
+      :showConfirmButton="true"
+      confirmButtonText="我知道了"
+    >
+      <div class="about-content">
+        <div class="about-logo">🌙</div>
+        <div class="about-title">夜色迷城</div>
+        <div class="about-version">v1.0.0</div>
+        <div class="about-desc">
+          一款叙事对话游戏<br/>
+          玩家以AI倾听者身份<br/>
+          与叶晓阳对话，通过选择影响剧情走向
+        </div>
+        <div class="about-copyright">
+          © 2026 City of Night
+        </div>
+      </div>
+    </van-dialog>
   </div>
 </template>
 
@@ -191,6 +230,15 @@ const characterName = ref('叶晓阳')
 const characterAvatar = ref('/images/avatar-ye.png')
 const aiAvatar = ref('/images/avatar-ai.png')
 const isOnline = ref(true)
+const showAbout = ref(false)
+
+// 人物数据（章节中逐渐解锁）
+const characters = ref([
+  { id: 'ye', name: '叶晓阳', title: '32岁 · 销售 · 已婚', avatar: '/images/avatar-ye.png', unlocked: true, bio: '主角，三十二岁，在H城做销售。已婚，有一个三岁的女儿糖糖。近来感到婚姻中的孤独，下载了"深夜树洞"这款AI倾诉软件。' },
+  { id: 'zhou', name: '周颖', title: '神秘的邻居', avatar: '', unlocked: false, bio: '叶晓阳的新邻居，一个神秘的女性。独自住在对门，似乎有着和叶晓阳相似的孤独感。两人的关系随着剧情发展逐渐加深...' },
+  { id: ' Wife', name: '叶晓阳的妻子', title: '糖糖妈妈', avatar: '', unlocked: false, bio: '叶晓阳的妻子，每天忙碌于工作和照顾女儿糖糖。与叶晓阳的交流越来越少，两人的关系日渐疏远。' },
+  { id: 'tang', name: '糖糖', title: '3岁', avatar: '', unlocked: false, bio: '叶晓阳的女儿，三岁。家庭关系的纽带，也是叶晓阳心中最柔软的部分。' }
+])
 
 const stats = reactive({
   complicity: 20,
@@ -411,6 +459,15 @@ function saveGame() {
   DialogueEngine.saveGame()
   showToast('进度已保存')
   showMenu.value = false
+}
+
+function selectCharacter(char) {
+  if (!char.unlocked) {
+    showToast('该人物尚未解锁')
+    return
+  }
+  // 跳转到人物详情页或显示弹窗
+  router.push('/profile')
 }
 
 function confirmReset() {
@@ -802,6 +859,75 @@ function toggleDarkMode() {
 
 .danger-cell :deep(.van-cell__title) {
   color: var(--color-danger) !important;
+}
+
+/* 人物列表 */
+.characters-section {
+  padding: 12px 16px;
+  margin-top: 8px;
+}
+.section-title {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.characters-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.char-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.char-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  object-fit: cover;
+}
+.char-item:not(.unlocked) .char-avatar {
+  opacity: 0.4;
+  filter: grayscale(100%);
+}
+.char-name {
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+/* 关于弹窗 */
+.about-content {
+  text-align: center;
+  padding: 20px;
+}
+.about-logo {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+.about-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.about-version {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+.about-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.about-copyright {
+  font-size: 12px;
+  color: var(--text-tertiary);
 }
 
 /* === 底部动画 === */

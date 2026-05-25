@@ -423,8 +423,8 @@ async function displayMessage(msg) {
   // 滚动到底部
   scrollToBottom()
   
-  // 等待显示时间（模拟阅读）
-  await delay(calcWaitTime(msg.content))
+  // 等待显示时间（使用delay字段，否则动态计算）
+  await delay(msg.delay ?? calcWaitTime(msg.content))
 }
 
 // === 显示选项 ===
@@ -449,9 +449,14 @@ async function autoPlay() {
   
   while (msg && (!msg.choices || msg.choices.length === 0)) {
     // 显示消息
-    isTyping.value = true
-    await delay(600 + Math.random() * 400)
-    isTyping.value = false
+    // 如果是系统消息(type:6)，不显示"正在输入"提示
+    const isSystemMsg = msg.type === 6
+    
+    if (!isSystemMsg) {
+      isTyping.value = true
+      await delay(600 + Math.random() * 400)
+      isTyping.value = false
+    }
     
     await displayMessage(msg)
     

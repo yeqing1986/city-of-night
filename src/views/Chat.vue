@@ -280,18 +280,22 @@ onMounted(() => {
 // === 剧情加载 ===
 async function loadChapter() {
   try {
-    const res = await fetch('/data/chapter1.json')
+    const res = await fetch('/data/chapter1_nodes.json')
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = await res.json()
     DialogueEngine.loadChapter(data)
 
-    // 开场白拆行显示
-    const lines = data.openingMessage.split('\n').filter(Boolean)
-    for (const line of lines) {
-      addMessage('system', line)
+    // 从第一个节点开始播放
+    const firstNode = DialogueEngine.getCurrentNode()
+    if (firstNode) {
+      if (firstNode.content) {
+        addMessage(firstNode.role, firstNode.content)
+      }
+      // 自动播放后续无选择节点
+      autoPlay()
+    } else {
+      addMessage('system', '剧情开始')
     }
-
-    addMessage('assistant', '你好，我是小七。睡不着——有什么心事吗？')
     showChoices()
   } catch (err) {
     showToast('剧情加载失败: ' + err.message)
@@ -331,6 +335,48 @@ function showChoices() {
   if (choices.length) {
     currentChoices.value = choices.map(c => ({ text: c.text, type: c.type || 'primary', affinity: c.affinity || 0 }))
     isWaiting.value = false
+  } else {
+    // 无选择但有nextNode，自动播放
+    autoPlay()
+  }
+}
+
+// 自动播放无选择的节点链
+async function autoPlay() {
+  let node = DialogueEngine.getCurrentNode()
+  while (node && !node.choices?.length && node.nextNode) {
+    isTyping.value = true
+    await new Promise(r => setTimeout(r, 600 + Math.random() * 400))
+    isTyping.value = false
+    
+    if (node.content) {
+      addMessage(node.role || 'assistant', node.content, { keywords: node.keywords || [] })
+    }
+    
+    // 更新天数
+    if (node.day && node.day !== currentDay.value) {
+      currentDay.value = node.day
+    }
+    
+    // 推进到下一节点
+    DialogueEngine.currentNode = node.nextNode
+    node = DialogueEngine.getCurrentNode()
+  }
+  
+  // 最后一个节点有内容则显示
+  if (node && node.content) {
+    isTyping.value = true
+    await new Promise(r => setTimeout(r, 600 + Math.random() * 400))
+    isTyping.value = false
+    addMessage(node.role || 'assistant', node.content, { keywords: node.keywords || [] })
+  }
+  
+  // 有选择则显示
+  if (node?.choices?.length) {
+    showChoices()
+  } else {
+    isWaiting.value = false
+    addMessage('system', '（剧情结束）')
   }
 }
 
@@ -345,46 +391,17 @@ async function makeChoice(index) {
   isTyping.value = true
 
   // 模拟思考延迟
-  const delay = 800 + Math.random() * 1200
-  await new Promise(r => setTimeout(r, delay))
-
+  await new Promise(r => setTimeout(r, 800 + Math.random() * 1200))
   isTyping.value = false
 
   const nextNode = DialogueEngine.makeChoice(index)
   if (!nextNode) return
 
-  // 天数过渡检测
-  if (nextNode.timestamp && nextNode.timestamp < '12:00' && currentDay.value > 1) {
-    currentDay.value = 0
+  // 天数过渡
+  if (nextNode.day && nextNode.day !== currentDay.value) {
+    currentDay.value = nextNode.day
+    addMessage('day-transition', `第${nextNode.day}天`)
   }
-
-  // 天数结束
-  if (nextNode.endDay && nextNode.daySummary) {
-    currentDay.value++
-    addMessage('day-transition', dayLabels[currentDay.value] || `第${currentDay.value}天`)
-    if (nextNode.nextNode) {
-      DialogueEngine.currentNode = nextNode.nextNode
-      // 短暂延迟后继续
-      isWaiting.value = false
-      isTyping.value = true
-      await new Promise(r => setTimeout(r, 1500))
-      isTyping.value = false
-      const follow = DialogueEngine.getCurrentNode()
-      if (follow) {
-        addMessage('assistant', follow.content, { keywords: follow.keywords })
-        if (follow.statsChange) applyStats(follow.statsChange)
-        if (follow.choices?.length) showChoices()
-        else if (follow.autoNext && follow.nextNode) {
-          DialogueEngine.currentNode = follow.nextNode
-          showChoices()
-        }
-      }
-      DialogueEngine.saveGame()
-      return
-    }
-  }
-
-  addMessage('assistant', nextNode.content, { keywords: nextNode.keywords })
 
   // 关键词收集
   if (nextNode.keywords?.length) {
@@ -401,21 +418,16 @@ async function makeChoice(index) {
     return
   }
 
-  // 自动跳转
-  if (nextNode.autoNext && nextNode.nextNode) {
+  // 自动播放后续节点
+  if (!nextNode.choices?.length && nextNode.nextNode) {
+    addMessage(nextNode.role || 'assistant', nextNode.content, { keywords: nextNode.keywords || [] })
     DialogueEngine.currentNode = nextNode.nextNode
-    const auto = DialogueEngine.getCurrentNode()
-    if (auto) {
-      isTyping.value = true
-      await new Promise(r => setTimeout(r, 1000))
-      isTyping.value = false
-      addMessage('assistant', auto.content, { keywords: auto.keywords })
-      if (auto.statsChange) applyStats(auto.statsChange)
-      if (auto.choices?.length) showChoices()
-    }
+    autoPlay()
   } else if (nextNode.choices?.length) {
+    addMessage(nextNode.role || 'assistant', nextNode.content, { keywords: nextNode.keywords || [] })
     showChoices()
   } else {
+    addMessage(nextNode.role || 'assistant', nextNode.content, { keywords: nextNode.keywords || [] })
     isWaiting.value = false
   }
 

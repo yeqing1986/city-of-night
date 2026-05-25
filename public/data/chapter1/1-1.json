@@ -18,8 +18,8 @@
     },
     {
       "id": "1-1_msg_003",
-      "type": 6,
-      "content": "愿意跟我说说今天发生了什么吗？\n[你点击了\"开始倾诉\"]",
+      "type": 2,
+      "content": "愿意跟我说说今天发生了什么吗？",
       "delay": 2000,
       "next": "1-1_msg_004"
     },
@@ -30,6 +30,16 @@
       "delay": 3000,
       "next": "1-1_msg_005"
     },
+    {
+      "id": "1-1_msg_004",
+      "type": 2,
+      "choices": [
+        {
+          "text": "还没睡",
+          "next": "msg_003",
+          "nextScene": "scene_001",
+          "effects": { "trust": 5 }
+        }
     {
       "id": "1-1_msg_005",
       "type": 1,

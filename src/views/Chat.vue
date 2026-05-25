@@ -543,6 +543,7 @@ function updateStatsDisplay() {
 function loadSaveSlots() {
   const saves = DialogueEngine.getAllSaves()
   for (const save of saves) {
+    if (!save) continue  // 跳过空存档槽
     const slot = saveSlots.value.find(s => s.id === save.slotId)
     if (slot) {
       slot.timestamp = save.timestamp

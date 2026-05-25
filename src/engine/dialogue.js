@@ -186,6 +186,14 @@ class DialogueEngine {
   }
 
   /**
+   * 获取当前消息（getCurrentNode的别名）
+   * @returns {Object|null} 当前节点
+   */
+  getCurrentMessage() {
+    return this.currentNode
+  }
+
+  /**
    * 更新数值
    * @param {Object} effects - 数值变化（如 { trust: 5, curiosity: -2 }）
    */

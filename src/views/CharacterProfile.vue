@@ -85,18 +85,18 @@ const router = useRouter()
 
 // 角色数据（从 JSON 加载）
 const character = ref({
-  avatar: '/images/avatar-ye.jpg',
+  avatar: '/images/avatar-ye.png',
   name: '叶晓阳',
-  title: 'UI/UX 设计师',
+  title: '产品经理',
   description: '外表冷静，内心热情。喜欢在深夜思考人生。',
   status: 'online',
   statusText: '在线',
-  age: 28,
-  occupation: 'UI/UX 设计师',
-  personality: '理性、内敛、完美主义',
-  likes: '设计、咖啡、深夜独处',
-  dislikes: '嘈杂环境、无理要求',
-  backstory: '从小热爱艺术，大学学习设计专业。毕业后进入互联网公司，现为高级 UI/UX 设计师。外表冷静理性，但内心充满热情。喜欢在深夜独自思考人生，享受安静的时光。'
+  age: 32,
+  occupation: '产品经理',
+  personality: '温和、体面、有责任感的上班族',
+  likes: '设计、茶、深夜独处',
+  dislikes: '害怕孤独，害怕被抛弃，道德感逐步沦丧',
+  backstory: '一个典型的都市中年男性，有着看似稳定的家庭和婚姻。然而，他和妻子陆夕瑶已经分房睡两年，两人之间的感情早已名存实亡。他的生活按部就班却缺乏激情，婚姻中的疏离让他感到孤独。'
 })
 
 // 好感度

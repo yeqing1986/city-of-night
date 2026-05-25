@@ -117,7 +117,7 @@
             <img :src="characterAvatar" alt="" />
           </div>
           <div class="menu-name">{{ characterName }}</div>
-          <div class="menu-desc">32岁 · 销售 · 已婚</div>
+          <div class="menu-desc">32岁 · 产品经理 · 已婚</div>
         </div>
 
         <!-- 数值面板 -->
@@ -147,7 +147,6 @@
 
         <!-- 功能列表 -->
         <van-cell-group :border="false" inset>
-          <van-cell title="个人资料" icon="contact" is-link @click="navigate('/profile')" />
           <van-cell title="相册" icon="photo-o" is-link @click="navigate('/gallery')" />
           <van-cell title="关键词收藏" icon="label-o" is-link @click="navigate('/keywords')" />
           <van-cell title="设置" icon="setting-o" is-link @click="navigate('/settings')" />
@@ -159,12 +158,18 @@
           <div class="section-title">人物</div>
           <div class="characters-grid">
             <div 
- v-for="char in characters" 
+              v-for="char in characters" 
               :key="char.id" 
               class="char-item"
+              :class="{ locked: !char.unlocked }"
               @click="selectCharacter(char)"
             >
-              <img :src="char.avatar" :alt="char.name" class="char-avatar" />
+              <div class="char-avatar-wrap">
+                <img v-if="char.unlocked && char.avatar" :src="char.avatar" :alt="char.name" class="char-avatar" />
+                <div v-else class="char-avatar locked-avatar">
+                  <van-icon name="lock" size="18" color="#999" />
+                </div>
+              </div>
               <div class="char-name">{{ char.name }}</div>
             </div>
           </div>
@@ -235,9 +240,9 @@ const showAbout = ref(false)
 // 人物数据（章节中逐渐解锁）
 const characters = ref([
   { id: 'ye', name: '叶晓阳', title: '32岁 · 销售 · 已婚', avatar: '/images/avatar-ye.png', unlocked: true, bio: '主角，三十二岁，在H城做销售。已婚，有一个三岁的女儿糖糖。近来感到婚姻中的孤独，下载了"深夜树洞"这款AI倾诉软件。' },
-  { id: 'zhou', name: '周颖', title: '神秘的邻居', avatar: '', unlocked: false, bio: '叶晓阳的新邻居，一个神秘的女性。独自住在对门，似乎有着和叶晓阳相似的孤独感。两人的关系随着剧情发展逐渐加深...' },
-  { id: ' Wife', name: '叶晓阳的妻子', title: '糖糖妈妈', avatar: '', unlocked: false, bio: '叶晓阳的妻子，每天忙碌于工作和照顾女儿糖糖。与叶晓阳的交流越来越少，两人的关系日渐疏远。' },
-  { id: 'tang', name: '糖糖', title: '3岁', avatar: '', unlocked: false, bio: '叶晓阳的女儿，三岁。家庭关系的纽带，也是叶晓阳心中最柔软的部分。' }
+  { id: 'zhou', name: '周颖', title: '神秘的邻居', avatar: '/images/avatar-zhou.png', unlocked: false, bio: '叶晓阳的新邻居，一个神秘的女性。独自住在对门，似乎有着和叶晓阳相似的孤独感。两人的关系随着剧情发展逐渐加深...' },
+  { id: 'wife', name: '叶晓阳的妻子', title: '糖糖妈妈', avatar: '/images/avatar-wife.png', unlocked: false, bio: '叶晓阳的妻子，每天忙碌于工作和照顾女儿糖糖。与叶晓阳的交流越来越少，两人的关系日渐疏远。' },
+  { id: 'tang', name: '糖糖', title: '3岁', avatar: '/images/avatar-tang.png', unlocked: false, bio: '叶晓阳的女儿，三岁。家庭关系的纽带，也是叶晓阳心中最柔软的部分。' }
 ])
 
 const stats = reactive({
@@ -883,6 +888,10 @@ function toggleDarkMode() {
   gap: 6px;
   cursor: pointer;
 }
+.char-avatar-wrap {
+  width: 48px;
+  height: 48px;
+}
 .char-avatar {
   width: 48px;
   height: 48px;
@@ -890,9 +899,17 @@ function toggleDarkMode() {
   background: var(--bg-secondary);
   object-fit: cover;
 }
-.char-item:not(.unlocked) .char-avatar {
-  opacity: 0.4;
-  filter: grayscale(100%);
+.locked-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.char-item.locked .char-name {
+  color: var(--text-tertiary);
 }
 .char-name {
   font-size: 12px;

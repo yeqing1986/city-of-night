@@ -340,10 +340,18 @@ onMounted(async () => {
     await startNewGame()
   }
 
-  // 恢复BGM
+  // BGM需要用户交互后才能播放（浏览器安全策略）
   const savedBGM = localStorage.getItem('night-city-bgm')
-  AudioManager.playBGM(savedBGM || 'chat', true)
-  
+  const pendingBGM = savedBGM || 'chat'
+  const playBGMonInteract = () => {
+    AudioManager.initAudioContext()
+    AudioManager.playBGM(pendingBGM, true)
+    document.removeEventListener('click', playBGMonInteract)
+    document.removeEventListener('touchstart', playBGMonInteract)
+  }
+  document.addEventListener('click', playBGMonInteract, { once: false })
+  document.addEventListener('touchstart', playBGMonInteract, { once: false })
+
   // 加载存档列表
   loadSaveSlots()
 })

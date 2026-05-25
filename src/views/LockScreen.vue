@@ -121,8 +121,15 @@ onMounted(() => {
   if (gameStore.lastAssistantMessage) {
     notificationText.value = gameStore.lastAssistantMessage
   }
-  AudioManager.initAudioContext?.()
-  AudioManager.playBGM?.('title', true)
+  // BGM需要用户首次交互后播放（浏览器安全策略）
+  const playOnInteract = () => {
+    AudioManager.initAudioContext?.()
+    AudioManager.playBGM?.('title', true)
+    document.removeEventListener('click', playOnInteract)
+    document.removeEventListener('touchstart', playOnInteract)
+  }
+  document.addEventListener('click', playOnInteract)
+  document.addEventListener('touchstart', playOnInteract)
 })
 
 onUnmounted(() => {

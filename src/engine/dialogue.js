@@ -212,14 +212,18 @@ class DialogueEngine {
       return
     }
 
-    Object.keys(effects).forEach(key => {
-      if (store.stats.hasOwnProperty(key)) {
-        const newValue = Math.max(0, Math.min(100, store.stats[key] + effects[key]))
-        store.stats[key] = newValue
-      }
-    })
+    // store 使用独立的 complicity/morality/suspicion ref
+    if (effects.complicity) {
+      store.complicity = Math.max(0, Math.min(100, store.complicity + effects.complicity))
+    }
+    if (effects.morality) {
+      store.morality = Math.max(0, Math.min(100, store.morality + effects.morality))
+    }
+    if (effects.suspicion) {
+      store.suspicion = Math.max(0, Math.min(100, store.suspicion + effects.suspicion))
+    }
 
-    console.log('[DialogueEngine] Stats updated:', store.stats)
+    console.log('[DialogueEngine] Stats updated:', { complicity: store.complicity, morality: store.morality, suspicion: store.suspicion })
   }
 
   /**
@@ -256,8 +260,9 @@ class DialogueEngine {
       slotId,
       currentNodeId: this.currentNode.id,
       currentSceneId: this.currentScene.sceneId,
-      stats: { ...store.stats },
-      unlockedGallery: [...store.unlockedGallery],
+      complicity: store.complicity,
+      morality: store.morality,
+      suspicion: store.suspicion,
       choicesHistory: [...this.history],
       timestamp: Date.now()
     }
@@ -300,11 +305,13 @@ class DialogueEngine {
       // 恢复数值
       const store = window.useGameStore ? window.useGameStore() : null
       if (store) {
-        store.stats = { ...saveData.stats }
-        store.unlockedGallery = [...saveData.unlockedGallery]
+        store.complicity = saveData.complicity ?? 20
+        store.morality = saveData.morality ?? 60
+        store.suspicion = saveData.suspicion ?? 10
       }
 
       console.log(`[DialogueEngine] Progress loaded from slot ${slotId}:`, saveData)
+      return saveData
       return saveData
     } catch (error) {
       console.error('[DialogueEngine] Failed to load progress:', error)
@@ -397,6 +404,10 @@ class DialogueEngine {
     const node = this.currentNode
     if (!node || !node.next) return null
 
+    // 记录回退位置
+    this._prevNodeId = node.id
+    this._prevSceneId = this.currentScene.sceneId
+
     const nextNodeId = node.next
     const nextSceneId = node.nextScene || this.currentScene.sceneId
 
@@ -405,6 +416,22 @@ class DialogueEngine {
     }
 
     this.currentNode = this.findNode(nextNodeId)
+    return this.currentNode
+  }
+
+  /**
+   * 回退到上一条消息（undo advance）
+   * @returns {Object|null} 回退后的当前节点
+   */
+  rewind() {
+    if (!this._prevNodeId) return null
+    if (this._prevSceneId && this._prevSceneId !== this.currentScene.sceneId) {
+      const prevScene = this.sceneCache.get(this._prevSceneId)
+      if (prevScene) this.currentScene = prevScene
+    }
+    this.currentNode = this.findNode(this._prevNodeId)
+    this._prevNodeId = null
+    this._prevSceneId = null
     return this.currentNode
   }
 

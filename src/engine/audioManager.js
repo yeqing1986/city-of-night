@@ -27,6 +27,8 @@ class AudioManager {
         'click': '/audio/sfx/click.mp3',
         'send': '/audio/sfx/send.mp3',
         'notification': '/audio/sfx/notification.mp3',
+        'error': '/audio/sfx/error.mp3',
+        'unlock': '/audio/sfx/unlock.mp3',
         'perfect': '/audio/sfx/perfect.mp3',
         'good': '/audio/sfx/good.mp3',
         'miss': '/audio/sfx/miss.mp3'
@@ -136,9 +138,16 @@ class AudioManager {
       return
     }
     
-    const audio = new Audio(sfxPath)
+    // 使用缓存的 Audio 对象，避免每次重新加载
+    let audio = this.sfxPlayers.get(sfxName)
+    if (!audio) {
+      audio = new Audio(sfxPath)
+      audio.preload = 'auto'
+      this.sfxPlayers.set(sfxName, audio)
+    }
     audio.volume = this.sfxVolume * this.volume
     audio.playbackRate = rate
+    audio.currentTime = 0
     
     audio.play().catch(error => {
       console.error(`[AudioManager] 音效播放失败: ${sfxName}`, error)

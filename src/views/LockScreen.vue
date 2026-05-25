@@ -3,19 +3,7 @@
     <!-- 星空粒子背景 -->
     <div class="stars" ref="starsContainer"></div>
 
-    <!-- 顶部消息通知 -->
-    <transition name="slide-down">
-      <div v-if="showNotification" class="notification" @click="onNotificationClick">
-        <div class="notification-app">
-          <van-icon name="chat-o" size="18" />
-          <span>微信</span>
-          <span class="notification-time">刚刚</span>
-        </div>
-        <div class="notification-body">
-          <strong>{{ characterName }}</strong>&nbsp;{{ notificationText }}
-        </div>
-      </div>
-    </transition>
+
 
     <!-- 中央时间 -->
     <div class="time-area">
@@ -179,11 +167,11 @@ function onNotificationClick() {
   color: #fff;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 40px 20px calc(24px + env(safe-area-inset-bottom));
+  padding: env(safe-area-inset-top) 20px calc(16px + env(safe-area-inset-bottom));
   box-sizing: border-box;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   user-select: none;
 }
 
@@ -194,49 +182,7 @@ function onNotificationClick() {
   pointer-events: none;
 }
 
-/* === 通知 === */
-.notification {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 14px;
-  padding: 14px 16px;
-  cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.2s ease;
-}
-.notification:active {
-  transform: scale(0.97);
-  opacity: 0.85;
-}
-.notification-app {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  opacity: 0.6;
-  margin-bottom: 6px;
-}
-.notification-time {
-  margin-left: auto;
-}
-.notification-body {
-  font-size: 15px;
-  line-height: 1.5;
-}
 
-.slide-down-enter-active,
-.slide-down-leave-active {
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.slide-down-enter-from {
-  transform: translateY(-60px);
-  opacity: 0;
-}
-.slide-down-leave-to {
-  transform: translateY(-60px);
-  opacity: 0;
-}
 
 /* === 时间区域 === */
 .time-area {
@@ -251,7 +197,7 @@ function onNotificationClick() {
   opacity: 0.5;
 }
 .time {
-  font-size: 86px;
+  font-size: clamp(64px, 16vw, 100px);
   font-weight: 200;
   line-height: 1;
   letter-spacing: -2px;
@@ -324,14 +270,16 @@ function onNotificationClick() {
 .numpad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 10px;
   max-width: 280px;
-  margin: 0 auto;
+  margin: 8px auto 4px;
   width: 100%;
 }
 .key {
   position: relative;
-  height: 72px;
+  aspect-ratio: 1;
+  height: auto;
+  min-height: clamp(56px, 10vw, 68px);
   border-radius: 50%;
   border: none;
   background: rgba(255, 255, 255, 0.08);

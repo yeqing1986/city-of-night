@@ -11,7 +11,7 @@
     >
       <template #title>
         <div class="navbar-title">
-          <span class="name">{{ characterName }}</span>
+          <span class="name">{{ navbarTitleText }}</span>
           <span class="status" :class="{ online: isOnline }">
             {{ statusText }}
           </span>
@@ -46,21 +46,21 @@
           <div class="day-divider"><span>{{ msg.content }}</span></div>
         </div>
 
-        <!-- 对方发言 (type:1) -->
-        <div v-if="msg.type === 1" class="msg-row user">
+        <!-- 对方发言 (type:1) - 头像在左，气泡在右 -->
+        <div v-if="msg.type === 1" class="msg-row other-side">
           <div class="avatar-wrap">
             <img :src="characterAvatar" alt="" class="avatar-img" />
           </div>
-          <div class="bubble user-bubble">
-            <span class="triangle user-tri"></span>
+          <div class="bubble other-bubble">
+            <span class="triangle other-tri"></span>
             <div class="bubble-text">{{ msg.content }}</div>
           </div>
         </div>
 
-        <!-- 我方发言-选项 (type:2) -->
-        <div v-else-if="msg.type === 2" class="msg-row ai">
-          <div class="bubble ai-bubble">
-            <span class="triangle ai-tri"></span>
+        <!-- 我方发言-选项 (type:2) - 气泡在左，头像在右 -->
+        <div v-else-if="msg.type === 2" class="msg-row my-side">
+          <div class="bubble my-bubble">
+            <span class="triangle my-tri"></span>
             <div class="bubble-text" v-html="msg.content.replace(/\n/g, '<br/>')"></div>
           </div>
           <div class="avatar-wrap">
@@ -68,21 +68,21 @@
           </div>
         </div>
 
-        <!-- 对方发图片 (type:3) -->
-        <div v-else-if="msg.type === 3" class="msg-row user">
+        <!-- 对方发图片 (type:3) - 头像在左 -->
+        <div v-else-if="msg.type === 3" class="msg-row other-side">
           <div class="avatar-wrap">
             <img :src="characterAvatar" alt="" class="avatar-img" />
           </div>
-          <div class="bubble user-bubble image-bubble">
-            <span class="triangle user-tri"></span>
+          <div class="bubble other-bubble image-bubble">
+            <span class="triangle other-tri"></span>
             <img :src="msg.imageUrl" alt="" class="msg-image" />
           </div>
         </div>
 
-        <!-- 自己发图片 (type:4) -->
-        <div v-else-if="msg.type === 4" class="msg-row ai">
-          <div class="bubble ai-bubble image-bubble">
-            <span class="triangle ai-tri"></span>
+        <!-- 自己发图片 (type:4) - 头像在右 -->
+        <div v-else-if="msg.type === 4" class="msg-row my-side">
+          <div class="bubble my-bubble image-bubble">
+            <span class="triangle my-tri"></span>
             <img :src="msg.imageUrl" alt="" class="msg-image" />
           </div>
           <div class="avatar-wrap">
@@ -101,18 +101,7 @@
         </div>
       </template>
 
-      <!-- 正在输入 -->
-      <div v-if="isTyping" class="msg-row ai typing-row">
-        <div class="bubble ai-bubble typing-bubble">
-          <span class="triangle ai-tri"></span>
-          <div class="typing-dots">
-            <i></i><i></i><i></i>
-          </div>
-        </div>
-        <div class="avatar-wrap">
-          <img :src="aiAvatar" alt="" class="avatar-img" />
-        </div>
-      </div>
+
 
       <!-- 底部留白 -->
       <div class="scroll-spacer"></div>
@@ -131,9 +120,13 @@
           {{ choice.text }}
         </button>
       </div>
-      <div v-else-if="isWaiting" class="waiting-area">
-        <van-loading type="spinner" size="18" />
-        <span>{{ characterName }} 正在输入...</span>
+      <div v-else-if="isWaiting" class="waiting-area" :class="{ 'waiting-choice': waitingForChoice }">
+        <template v-if="waitingForChoice">
+          <span>正在输入</span><span class="dot-anim"><span>.</span><span>.</span><span>.</span></span>
+        </template>
+        <template v-else>
+          <span>{{ characterName }} 正在输入</span><span class="dot-anim"><span>.</span><span>.</span><span>.</span></span>
+        </template>
       </div>
     </transition>
 
@@ -281,6 +274,7 @@ const messages = ref([])
 const currentChoices = ref([])
 const isTyping = ref(false)
 const isWaiting = ref(true)
+const waitingForChoice = ref(false)
 const showMenu = ref(false)
 const isDarkMode = ref(false)
 const currentDay = ref(1)
@@ -320,7 +314,20 @@ const dayLabels = {
 }
 
 const currentDayLabel = computed(() => dayLabels[currentDay.value] || `第${currentDay.value}天`)
-const statusText = computed(() => isOnline.value ? '在线' : '离线')
+const statusText = computed(() => {
+  if (!isWaiting.value) return isOnline.value ? '在线' : '离线'
+  // 等待时根据下一条消息类型显示
+  const nextMsg = DialogueEngine.getCurrentMessage?.()
+  if (nextMsg && nextMsg.type === 2) return '' // 我方选择时不显示状态
+  return ''
+})
+
+const navbarTitleText = computed(() => {
+  if (!isWaiting.value || currentChoices.value.length > 0) return characterName.value
+  const nextMsg = DialogueEngine.getCurrentMessage?.()
+  if (nextMsg && nextMsg.type === 1) return '对方正在输入...'
+  return characterName.value
+})
 
 onMounted(async () => {
   const savedTheme = localStorage.getItem('night-city-theme')
@@ -456,14 +463,22 @@ async function autoPlay() {
   let msg = DialogueEngine.getCurrentMessage()
   
   while (msg && (!msg.choices || msg.choices.length === 0)) {
-    // 显示消息
-    // 如果是系统消息(type:6)，不显示"正在输入"提示
     const isSystemMsg = msg.type === 6
     
+    // 检查下一条是否是type:2（选项），提前设置状态让UI更新
+    await DialogueEngine.advance()
+    const nextAfterAdvance = DialogueEngine.getCurrentMessage()
+    if (nextAfterAdvance && nextAfterAdvance.type === 2) {
+      waitingForChoice.value = true
+      isWaiting.value = true
+      await nextTick()
+      break  // 停在type:2前，让UI显示"正在输入"
+    }
+    // 回退并显示当前消息
+    await DialogueEngine.rewind()
+    
     if (!isSystemMsg) {
-      isTyping.value = true
       await delay(600 + Math.random() * 400)
-      isTyping.value = false
     }
     
     await displayMessage(msg)
@@ -474,6 +489,7 @@ async function autoPlay() {
   }
   
   // 显示选项（如果有）
+  waitingForChoice.value = false
   if (msg && msg.choices && msg.choices.length > 0) {
     showChoices()
   } else if (!msg) {
@@ -493,11 +509,10 @@ async function makeChoice(index) {
   
   currentChoices.value = []
   isWaiting.value = true
-  isTyping.value = true
+  waitingForChoice.value = false
 
   // 模拟思考延迟
   await delay(800 + Math.random() * 1200)
-  isTyping.value = false
 
   // 应用选择
   const nextMsg = await DialogueEngine.makeChoice(index)
@@ -775,10 +790,12 @@ function toggleDarkMode() {
   margin-bottom: 16px;
   animation: msgIn 0.3s ease;
 }
-.msg-row.user {
+/* 对方消息：头像在左，气泡在右 */
+.msg-row.other-side {
   flex-direction: row;
 }
-.msg-row.ai {
+/* 我方消息：头像在右，气泡在左 */
+.msg-row.my-side {
   flex-direction: row-reverse;
 }
 
@@ -811,17 +828,17 @@ function toggleDarkMode() {
   font-size: 15px;
   word-break: break-word;
 }
-.ai-bubble {
-  background: var(--bg-message-assistant);
-  color: var(--text-primary);
-  box-shadow: var(--shadow-message);
-}
-.user-bubble {
+.other-bubble {
   background: var(--bg-message-user);
   color: #111;
   box-shadow: var(--shadow-message);
 }
-[data-theme='dark'] .user-bubble {
+.my-bubble {
+  background: var(--bg-message-assistant);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-message);
+}
+[data-theme='dark'] .other-bubble {
   color: #e0e0e0;
 }
 
@@ -843,17 +860,19 @@ function toggleDarkMode() {
   width: 0;
   height: 0;
 }
-.ai-bubble .ai-tri {
+/* 对方气泡箭头指向左（指向头像方向） */
+.other-bubble .other-tri {
   left: -6px;
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
-  border-right: 6px solid var(--bg-message-assistant);
+  border-right: 6px solid var(--bg-message-user);
 }
-.user-bubble .user-tri {
+/* 我方气泡箭头指向右（指向头像方向） */
+.my-bubble .my-tri {
   right: -6px;
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
-  border-left: 6px solid var(--bg-message-user);
+  border-left: 6px solid var(--bg-message-assistant);
 }
 
 /* === 动态消息 === */
@@ -881,29 +900,6 @@ function toggleDarkMode() {
 .ending-content {
   font-size: 18px;
   font-weight: 600;
-}
-
-/* === 正在输入 === */
-.typing-bubble {
-  padding: 14px 18px;
-}
-.typing-dots {
-  display: flex;
-  gap: 4px;
-}
-.typing-dots i {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--text-secondary);
-  animation: bounce 1.2s infinite;
-}
-.typing-dots i:nth-child(2) { animation-delay: 0.15s; }
-.typing-dots i:nth-child(3) { animation-delay: 0.3s; }
-
-@keyframes bounce {
-  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-  30% { transform: translateY(-6px); opacity: 1; }
 }
 
 /* === 选择按钮区域 === */
@@ -954,16 +950,31 @@ function toggleDarkMode() {
 
 /* === 等待提示 === */
 .waiting-area {
-  padding: 16px calc(16px + env(safe-area-inset-bottom));
-  background: var(--bg-primary);
-  border-top:1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  color: var(--text-secondary);
+  padding: 12px 16px;
+  color: var(--text-secondary, #999);
   font-size: 13px;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
 }
+.dot-anim span {
+  animation: dotFade 1.4s infinite;
+  opacity: 0;
+  font-weight: bold;
+}
+.dot-anim span:nth-child(1) { animation-delay: 0s; }
+.dot-anim span:nth-child(2) { animation-delay: 0.2s; }
+.dot-anim span:nth-child(3) { animation-delay: 0.4s; }
+.waiting-area.waiting-choice {
+  justify-content: center;
+}
+@keyframes dotFade {
+  0%, 60%, 100% { opacity: 0; }
+  30% { opacity: 1; }
+}
+
 
 /* === 侧边菜单 === */
 .menu-panel {

@@ -6,10 +6,16 @@ import Vant from 'vant'
 import 'vant/lib/index.css'
 import './style.css'
 
+import { useGameStore } from './stores/game'
+
 const app = createApp(App)
 
 // 注册 Pinia（状态管理）
-app.use(createPinia())
+const pinia = createPinia()
+app.use(pinia)
+
+// 暴露 store 到 window（dialogue.js 需要通过 window 访问）
+window.useGameStore = () => useGameStore()
 
 // 注册 Vue Router（路由管理）
 app.use(router)

@@ -352,7 +352,7 @@ onMounted(async () => {
 async function startNewGame() {
   try {
     // 开始第一章第一节
-    await DialogueEngine.startDialogue('scene_001', 'msg_001')
+    await DialogueEngine.startDialogue('1-1', '1-1_msg_001')
     
     // 显示第一条消息
     const currentMsg = DialogueEngine.getCurrentMessage()

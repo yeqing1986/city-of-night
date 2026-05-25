@@ -67,7 +67,7 @@
             <div class="bubble-text">{{ msg.content }}</div>
           </div>
           <div class="avatar-wrap">
-            <img :src="userAvatar" alt="" class="avatar-img" />
+            <img :src="aiAvatar" alt="" class="avatar-img" />
           </div>
         </div>
       </template>
@@ -188,9 +188,8 @@ const isDarkMode = ref(false)
 const currentDay = ref(1)
 
 const characterName = ref('叶晓阳')
-const characterAvatar = ref('/images/avatar-ye.svg')
-const aiAvatar = ref('/images/avatar-ai.svg')
-const userAvatar = ref('/images/avatar-user.svg')
+const characterAvatar = ref('/images/avatar-ye.png')
+const aiAvatar = ref('/images/avatar-ai.png')
 const isOnline = ref(true)
 
 const stats = reactive({
@@ -260,6 +259,10 @@ function restoreMessages() {
 // === 消息管理 ===
 function addMessage(role, content, extra = {}) {
   messages.value.push({ role, content, timestamp: Date.now(), ...extra })
+  // 同步最新AI消息到store，供锁屏通知使用
+  if (role === 'assistant') {
+    gameStore.lastAssistantMessage = content
+  }
   scrollToBottom()
 }
 

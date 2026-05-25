@@ -16,6 +16,9 @@ export const useGameStore = defineStore('game', () => {
   // 剧情数据
   const chapterData = ref(null)
 
+  // 锁屏通知用的最新消息
+  const lastAssistantMessage = ref('')
+
   // 计算属性
   const totalAffinity = computed(() => complicity.value + (100 - suspicion.value))
   
@@ -121,6 +124,7 @@ export const useGameStore = defineStore('game', () => {
     morality,
     suspicion,
     chapterData,
+    lastAssistantMessage,
     // Computed
     totalAffinity,
     endingType,

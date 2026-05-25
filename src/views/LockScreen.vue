@@ -60,12 +60,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useGameStore } from '@/stores/game'
 import { useRouter } from 'vue-router'
 import { showToast } from 'vant'
 import AudioManager from '@/engine/audioManager'
 
 const router = useRouter()
+const gameStore = useGameStore()
 const now = ref(new Date())
 let timer = null
 
@@ -73,7 +75,7 @@ const password = ref('')
 const isShaking = ref(false)
 const showNotification = ref(true)
 const characterName = ref('叶晓阳')
-const notificationText = ref('在吗？')
+const notificationText = ref(gameStore.lastAssistantMessage || '在吗？')
 
 const numpadKeys = [
   { label: '1', sub: '' },
@@ -108,8 +110,17 @@ const hintText = computed(() => {
   return ''
 })
 
+// 监听store中的最新消息，实时更新锁屏通知
+watch(() => gameStore.lastAssistantMessage, (val) => {
+  if (val) notificationText.value = val
+})
+
 onMounted(() => {
   timer = setInterval(() => { now.value = new Date() }, 1000)
+  // 如果store已有消息，显示它
+  if (gameStore.lastAssistantMessage) {
+    notificationText.value = gameStore.lastAssistantMessage
+  }
   AudioManager.initAudioContext?.()
   AudioManager.playBGM?.('title', true)
 })
@@ -313,10 +324,7 @@ function onNotificationClick() {
 }
 .key {
   position: relative;
-  width: 100%;
-  aspect-ratio: 1;
-  min-height: 56px;
-  max-height: 72px;
+  height: 72px;
   border-radius: 50%;
   border: none;
   background: rgba(255, 255, 255, 0.08);

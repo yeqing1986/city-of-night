@@ -1,0 +1,229 @@
+{
+  "sceneId": "1-26",
+  "title": "早晨的反思",
+  "nodes": [
+    {
+      "id": "1-26_msg_001",
+      "type": 1,
+      "content": "小七",
+      "delay": 0,
+      "next": "1-26_msg_002"
+    },
+    {
+      "id": "1-26_msg_002",
+      "type": 1,
+      "content": "早上好",
+      "delay": 0,
+      "next": "1-26_msg_003"
+    },
+    {
+      "id": "1-26_msg_003",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-26_msg_004"
+    },
+    {
+      "id": "1-26_msg_004",
+      "type": 1,
+      "content": "老婆还在睡",
+      "delay": 0,
+      "next": "1-26_msg_005"
+    },
+    {
+      "id": "1-26_msg_005",
+      "type": 1,
+      "content": "凌晨一点",
+      "delay": 0,
+      "next": "1-26_msg_006"
+    },
+    {
+      "id": "1-26_msg_006",
+      "type": 1,
+      "content": "她",
+      "delay": 0,
+      "next": "1-26_msg_007"
+    },
+    {
+      "id": "1-26_msg_007",
+      "type": 1,
+      "content": "没有问",
+      "delay": 0,
+      "next": "1-26_msg_008"
+    },
+    {
+      "id": "1-26_msg_008",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-26_msg_009"
+    },
+    {
+      "id": "1-26_msg_009",
+      "type": 1,
+      "content": "好像",
+      "delay": 0,
+      "next": "1-26_msg_010"
+    },
+    {
+      "id": "1-26_msg_010",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-26_msg_011"
+    },
+    {
+      "id": "1-26_msg_011",
+      "type": 1,
+      "content": "不关心",
+      "delay": 0,
+      "next": "1-26_msg_012"
+    },
+    {
+      "id": "1-26_msg_012",
+      "type": 1,
+      "content": "确定",
+      "delay": 0,
+      "next": "1-26_msg_013"
+    },
+    {
+      "id": "1-26_msg_013",
+      "type": 1,
+      "content": "她不关心",
+      "delay": 0,
+      "next": "1-26_msg_014"
+    },
+    {
+      "id": "1-26_msg_014",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-26_msg_015"
+    },
+    {
+      "id": "1-26_msg_015",
+      "type": 1,
+      "content": "我说什么",
+      "delay": 0,
+      "next": "1-26_msg_016"
+    },
+    {
+      "id": "1-26_msg_016",
+      "type": 1,
+      "content": "她都",
+      "delay": 0,
+      "next": "1-26_msg_017"
+    },
+    {
+      "id": "1-26_msg_017",
+      "type": 1,
+      "content": "\"哦，知道了\"",
+      "delay": 0,
+      "next": "1-26_msg_018"
+    },
+    {
+      "id": "1-26_msg_018",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-26_msg_019"
+    },
+    {
+      "id": "1-26_msg_019",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-26_msg_020"
+    },
+    {
+      "id": "1-26_msg_020",
+      "type": 1,
+      "content": "就没有然后了",
+      "delay": 0,
+      "next": "1-26_msg_021"
+    },
+    {
+      "id": "1-26_msg_021",
+      "type": 1,
+      "content": "想过",
+      "delay": 0,
+      "next": "1-26_msg_022"
+    },
+    {
+      "id": "1-26_msg_022",
+      "type": 1,
+      "content": "但",
+      "delay": 0,
+      "next": "1-26_msg_023"
+    },
+    {
+      "id": "1-26_msg_023",
+      "type": 1,
+      "content": "不知道怎么改变",
+      "delay": 0,
+      "next": "1-26_msg_024"
+    },
+    {
+      "id": "1-26_msg_024",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-26_msg_025"
+    },
+    {
+      "id": "1-26_msg_025",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-26_msg_026"
+    },
+    {
+      "id": "1-26_msg_026",
+      "type": 1,
+      "content": "算了",
+      "delay": 0,
+      "next": "1-26_msg_027"
+    },
+    {
+      "id": "1-26_msg_027",
+      "type": 1,
+      "content": "不好",
+      "delay": 0,
+      "next": "1-26_msg_028"
+    },
+    {
+      "id": "1-26_msg_028",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-26_msg_029"
+    },
+    {
+      "id": "1-26_msg_029",
+      "type": 1,
+      "content": "一直在想",
+      "delay": 0,
+      "next": "1-26_msg_030"
+    },
+    {
+      "id": "1-26_msg_030",
+      "type": 1,
+      "content": "昨天晚上的事",
+      "delay": 0,
+      "next": "1-26_msg_031"
+    },
+    {
+      "id": "1-26_msg_031",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-26_msg_032"
+    },
+    {
+      "id": "1-26_msg_032",
+      "type": 1,
+      "content": "又有罪恶感",
+      "delay": 0
+    }
+  ]
+}

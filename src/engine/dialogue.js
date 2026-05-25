@@ -1,202 +1,343 @@
 /**
- * 对话引擎 - 核心玩法逻辑（简化版）
- * 直接支持线性场景格式：{ scenes: [{ messages: [...] }] }
- * 不再需要节点树转换
+ * dialogue.js - 对话引擎 v4.1
+ * 
+ * 功能：
+ * 1. 支持新JSON格式（按场景拆分）
+ * 2. 场景按需加载
+ * 3. 存档系统（3插槽）
+ * 4. 离线/上线机制（type:6 + wait）
+ * 5. 正在输入提示（normal/long_pause）
+ * 
+ * 消息类型（type字段）：
+ * - type:1 = 对方发言
+ * - type:2 = 我方发言（选项）
+ * - type:3 = 对方发图片
+ * - type:4 = 自己发图片
+ * - type:5 = 动态
+ * - type:6 = 系统消息（离线/上线）
+ * - type:7 = 结局（不输出，直接跳转）
  */
 
 class DialogueEngine {
   constructor() {
-    this.chapterData = null
-    this.currentSceneIdx = 0
-    this.currentMessageIdx = -1  // -1 = 尚未开始
-    this.history = []  // [{ sceneIdx, messageIdx, choiceText }]
-    this.stats = {
-      共谋值: 20,
-      道德值: 60,
-      怀疑值: 10
+    this.manifest = null           // 场景清单
+    this.currentScene = null       // 当前场景数据
+    this.currentNode = null        // 当前节点
+    this.history = []             // 选择历史
+    this.sceneCache = new Map()    // 场景缓存
+    this.isProcessing = false      // 是否正在处理消息
+  }
+
+  /**
+   * 初始化：加载场景清单
+   */
+  async init() {
+    try {
+      const response = await fetch('/data/chapter1/manifest.json')
+      this.manifest = await response.json()
+      console.log('[DialogueEngine] Manifest loaded:', this.manifest)
+    } catch (error) {
+      console.error('[DialogueEngine] Failed to load manifest:', error)
+      throw error
     }
   }
 
   /**
-   * 加载章节数据（支持场景格式）
+   * 加载场景
+   * @param {string} sceneId - 场景ID（如 "scene_001"）
+   * @returns {Promise<Object>} 场景数据
    */
-  loadChapter(data) {
-    this.chapterData = data
-    this.currentSceneIdx = 0
-    this.currentMessageIdx = -1
-    this.history = []
-    
-    // 初始化数值
-    if (data.summary?.initialStats) {
-      this.stats = { ...data.summary.initialStats }
+  async loadScene(sceneId) {
+    // 检查缓存
+    if (this.sceneCache.has(sceneId)) {
+      console.log(`[DialogueEngine] Scene ${sceneId} loaded from cache`)
+      return this.sceneCache.get(sceneId)
     }
+
+    // 从manifest获取文件名
+    const sceneInfo = this.manifest.scenes.find(s => s.id === sceneId)
+    if (!sceneInfo) {
+      throw new Error(`Scene ${sceneId} not found in manifest`)
+    }
+
+    // 加载场景文件
+    try {
+      const response = await fetch(`/data/chapter1/${sceneInfo.file}`)
+      const scene = await response.json()
+      
+      // 缓存场景
+      this.sceneCache.set(sceneId, scene)
+      console.log(`[DialogueEngine] Scene ${sceneId} loaded and cached`)
+      
+      return scene
+    } catch (error) {
+      console.error(`[DialogueEngine] Failed to load scene ${sceneId}:`, error)
+      throw error
+    }
+  }
+
+  /**
+   * 启动对话（从指定节点开始）
+   * @param {string} sceneId - 场景ID
+   * @param {string} nodeId - 节点ID
+   */
+  async startDialogue(sceneId, nodeId) {
+    this.currentScene = await this.loadScene(sceneId)
+    this.currentNode = this.findNode(nodeId)
     
-    console.log(`[DialogueEngine] 加载章节: ${data.title}`)
+    if (!this.currentNode) {
+      throw new Error(`Node ${nodeId} not found in scene ${sceneId}`)
+    }
+
+    console.log('[DialogueEngine] Dialogue started:', { sceneId, nodeId })
+    return this.currentNode
   }
 
   /**
-   * 获取当前消息
+   * 在场景中查找节点
+   * @param {string} nodeId - 节点ID
+   * @returns {Object|null} 节点数据
    */
-  getCurrentMessage() {
-    if (!this.chapterData?.scenes) return null
-    const scene = this.chapterData.scenes[this.currentSceneIdx]
-    if (!scene) return null
-    return scene.messages[this.currentMessageIdx] || null
+  findNode(nodeId) {
+    if (!this.currentScene) return null
+    return this.currentScene.nodes.find(n => n.id === nodeId) || null
   }
 
   /**
-   * 获取当前场景
+   * 处理选择
+   * @param {number} choiceIndex - 选项索引
+   * @returns {Promise<Object>} 下一条消息
    */
-  getCurrentScene() {
-    if (!this.chapterData?.scenes) return null
-    return this.chapterData.scenes[this.currentSceneIdx] || null
+  async makeChoice(choiceIndex) {
+    if (this.isProcessing) {
+      console.warn('[DialogueEngine] Already processing, please wait')
+      return null
+    }
+
+    const node = this.getCurrentNode()
+    if (!node || node.type !== 2) {
+      console.error('[DialogueEngine] Current node is not a choice node')
+      return null
+    }
+
+    if (!node.choices || choiceIndex >= node.choices.length) {
+      console.error('[DialogueEngine] Invalid choice index:', choiceIndex)
+      return null
+    }
+
+    this.isProcessing = true
+
+    try {
+      const choice = node.choices[choiceIndex]
+
+      // 更新数值
+      if (choice.effects) {
+        this.updateStats(choice.effects)
+      }
+
+      // 记录历史
+      this.history.push({
+        nodeId: node.id,
+        sceneId: this.currentScene.sceneId,
+        choiceIndex
+      })
+
+      // 自动存档（保存到slot 1）
+      this.autoSave()
+
+      // 获取下一条消息
+      const nextNodeId = choice.next
+      const nextSceneId = choice.nextScene || this.currentScene.sceneId
+
+      // 如果跨场景，加载新场景
+      if (nextSceneId !== this.currentScene.sceneId) {
+        this.currentScene = await this.loadScene(nextSceneId)
+      }
+
+      // 找到下一个节点
+      this.currentNode = this.findNode(nextNodeId)
+      
+      if (!this.currentNode) {
+        throw new Error(`Next node ${nextNodeId} not found in scene ${nextSceneId}`)
+      }
+
+      console.log('[DialogueEngine] Choice made:', {
+        choiceIndex,
+        nextNodeId,
+        nextSceneId,
+        nextNodeType: this.currentNode.type
+      })
+
+      return this.currentNode
+    } catch (error) {
+      console.error('[DialogueEngine] Failed to make choice:', error)
+      return null
+    } finally {
+      this.isProcessing = false
+    }
   }
 
   /**
-   * 获取当前天数
+   * 获取当前节点
+   * @returns {Object|null} 当前节点
    */
-  getCurrentDay() {
-    const scene = this.getCurrentScene()
-    return scene?.day || 1
+  getCurrentNode() {
+    return this.currentNode
   }
 
   /**
-   * 获取可用选项
+   * 更新数值
+   * @param {Object} effects - 数值变化（如 { trust: 5, curiosity: -2 }）
    */
-  getAvailableChoices() {
-    const msg = this.getCurrentMessage()
-    if (!msg || !msg.choices) return []
-    return msg.choices
-  }
+  updateStats(effects) {
+    const store = window.useGameStore ? window.useGameStore() : null
+    if (!store) {
+      console.warn('[DialogueEngine] Game store not available')
+      return
+    }
 
-  /**
-   * 选择选项
-   * @returns 下一个消息对象（或null）
-   */
-  makeChoice(choiceIndex) {
-    const msg = this.getCurrentMessage()
-    if (!msg || !msg.choices) return null
-
-    const choice = msg.choices[choiceIndex]
-    if (!choice) return null
-
-    // 记录历史
-    this.history.push({
-      sceneIdx: this.currentSceneIdx,
-      messageIdx: this.currentMessageIdx,
-      choiceText: choice.text
+    Object.keys(effects).forEach(key => {
+      if (store.stats.hasOwnProperty(key)) {
+        const newValue = Math.max(0, Math.min(100, store.stats[key] + effects[key]))
+        store.stats[key] = newValue
+      }
     })
 
-    // 跳转到目标场景/消息
-    // 格式: choice.nextScene, choice.nextMessage
-    // 如果没有指定，默认顺序推进
-    if (choice.nextScene !== undefined) {
-      this.currentSceneIdx = choice.nextScene
-      this.currentMessageIdx = choice.nextMessage || 0
-    } else {
-      // 没有指定跳转，顺序推进到下一条
-      this.advance()
-    }
-
-    // 应用数值变化
-    if (choice.statsChange) {
-      this.applyStats(choice.statsChange)
-    }
-
-    return this.getCurrentMessage()
+    console.log('[DialogueEngine] Stats updated:', store.stats)
   }
 
   /**
-   * 自动推进到下一条消息（无选择时）
+   * 自动存档（保存到slot 1）
    */
-  advance() {
-    const scene = this.chapterData?.scenes[this.currentSceneIdx]
-    if (!scene) return null
-
-    this.currentMessageIdx++
-
-    // 如果超出当前场景，进入下一个场景
-    if (this.currentMessageIdx >= scene.messages.length) {
-      this.currentSceneIdx++
-      this.currentMessageIdx = 0
-    }
-
-    return this.getCurrentMessage()
+  autoSave() {
+    this.saveProgress(1)
   }
 
   /**
-   * 应用数值变化
+   * 手动存档（保存到slot 2或3）
+   * @param {number} slotId - 存档位ID（2或3）
    */
-  applyStats(changes) {
-    if (!changes) return
-    for (const [key, value] of Object.entries(changes)) {
-      if (this.stats[key] !== undefined) {
-        this.stats[key] = Math.max(0, Math.min(100, this.stats[key] + value))
-      }
+  manualSave(slotId) {
+    if (slotId < 2 || slotId > 3) {
+      console.error('[DialogueEngine] Manual save only supports slot 2 and 3')
+      return
     }
+    this.saveProgress(slotId)
   }
 
   /**
-   * 保存游戏状态
+   * 保存进度
+   * @param {number} slotId - 存档位ID（1-3）
    */
-  saveGame() {
+  saveProgress(slotId) {
+    const store = window.useGameStore ? window.useGameStore() : null
+    if (!store) {
+      console.warn('[DialogueEngine] Game store not available')
+      return
+    }
+
     const saveData = {
-      currentSceneIdx: this.currentSceneIdx,
-      currentMessageIdx: this.currentMessageIdx,
-      history: this.history,
-      stats: this.stats,
+      slotId,
+      currentNodeId: this.currentNode.id,
+      currentSceneId: this.currentScene.sceneId,
+      stats: { ...store.stats },
+      unlockedGallery: [...store.unlockedGallery],
+      choicesHistory: [...this.history],
       timestamp: Date.now()
     }
-    localStorage.setItem('night-city-save', JSON.stringify(saveData))
-    console.log('[DialogueEngine] 游戏已保存')
-  }
 
-  /**
-   * 加载游戏状态
-   */
-  loadGame() {
     try {
-      const saveData = JSON.parse(localStorage.getItem('night-city-save'))
-      if (!saveData) return false
-
-      this.currentSceneIdx = saveData.currentSceneIdx || 0
-      this.currentMessageIdx = saveData.currentMessageIdx || 0
-      this.history = saveData.history || []
-      this.stats = saveData.stats || { 共谋值: 20, 道德值: 60, 怀疑值: 10 }
-      
-      console.log('[DialogueEngine] 游戏已加载')
-      return true
-    } catch (err) {
-      console.error('[DialogueEngine] 加载失败:', err)
-      return false
+      localStorage.setItem(`night-city-save-${slotId}`, JSON.stringify(saveData))
+      console.log(`[DialogueEngine] Progress saved to slot ${slotId}:`, saveData)
+    } catch (error) {
+      console.error('[DialogueEngine] Failed to save progress:', error)
     }
   }
 
   /**
-   * 重置游戏
+   * 加载进度
+   * @param {number} slotId - 存档位ID（1-3）
+   * @returns {Promise<Object|null>} 存档数据
    */
-  resetGame() {
-    this.currentSceneIdx = 0
-    this.currentMessageIdx = -1
+  async loadProgress(slotId) {
+    try {
+      const saveDataStr = localStorage.getItem(`night-city-save-${slotId}`)
+      if (!saveDataStr) {
+        console.log(`[DialogueEngine] No save data found in slot ${slotId}`)
+        return null
+      }
+
+      const saveData = JSON.parse(saveDataStr)
+
+      // 加载场景
+      this.currentScene = await this.loadScene(saveData.currentSceneId)
+
+      // 找到当前节点
+      this.currentNode = this.findNode(saveData.currentNodeId)
+      if (!this.currentNode) {
+        throw new Error(`Current node ${saveData.currentNodeId} not found`)
+      }
+
+      // 恢复历史
+      this.history = [...saveData.choicesHistory]
+
+      // 恢复数值
+      const store = window.useGameStore ? window.useGameStore() : null
+      if (store) {
+        store.stats = { ...saveData.stats }
+        store.unlockedGallery = [...saveData.unlockedGallery]
+      }
+
+      console.log(`[DialogueEngine] Progress loaded from slot ${slotId}:`, saveData)
+      return saveData
+    } catch (error) {
+      console.error('[DialogueEngine] Failed to load progress:', error)
+      return null
+    }
+  }
+
+  /**
+   * 获取所有存档信息
+   * @returns {Array} 存档信息列表
+   */
+  getAllSaves() {
+    const saves = []
+    for (let i = 1; i <= 3; i++) {
+      const saveDataStr = localStorage.getItem(`night-city-save-${i}`)
+      if (saveDataStr) {
+        try {
+          saves[i - 1] = JSON.parse(saveDataStr)
+        } catch (error) {
+          saves[i - 1] = null
+        }
+      } else {
+        saves[i - 1] = null
+      }
+    }
+    return saves
+  }
+
+  /**
+   * 删除存档
+   * @param {number} slotId - 存档位ID（1-3）
+   */
+  deleteSave(slotId) {
+    localStorage.removeItem(`night-city-save-${slotId}`)
+    console.log(`[DialogueEngine] Save slot ${slotId} deleted`)
+  }
+
+  /**
+   * 重置引擎状态
+   */
+  reset() {
+    this.currentScene = null
+    this.currentNode = null
     this.history = []
-    this.stats = {
-      共谋值: 20,
-      道德值: 60,
-      怀疑值: 10
-    }
-    localStorage.removeItem('night-city-save')
-    console.log('[DialogueEngine] 游戏已重置')
-  }
-
-  /**
-   * 获取统计信息
-   */
-  getStats() {
-    return {
-      ...this.stats,
-      historyLength: this.history.length
-    }
+    this.isProcessing = false
+    console.log('[DialogueEngine] Engine reset')
   }
 }
 
-export default new DialogueEngine()
+// 导出单例
+const dialogueEngine = new DialogueEngine()
+export default dialogueEngine

@@ -36,8 +36,8 @@
           {{ formatTime(msg.timestamp) }}
         </div>
 
-        <!-- 系统消息 -->
-        <div v-if="msg.role === 'system'" class="system-msg">
+        <!-- 系统消息 (type:6) -->
+        <div v-if="msg.type === 6" class="system-msg">
           {{ msg.content }}
         </div>
 
@@ -46,8 +46,8 @@
           <div class="day-divider"><span>{{ msg.content }}</span></div>
         </div>
 
-        <!-- 叶晓阳的消息（左侧） -->
-        <div v-if="msg.role === 'user'" class="msg-row user">
+        <!-- 对方发言 (type:1) -->
+        <div v-if="msg.type === 1" class="msg-row user">
           <div class="avatar-wrap">
             <img :src="characterAvatar" alt="" class="avatar-img" />
           </div>
@@ -57,8 +57,8 @@
           </div>
         </div>
 
-        <!-- AI 消息（右侧） -->
-        <div v-else-if="msg.role === 'assistant'" class="msg-row ai">
+        <!-- 我方发言-选项 (type:2) -->
+        <div v-else-if="msg.type === 2" class="msg-row ai">
           <div class="bubble ai-bubble">
             <span class="triangle ai-tri"></span>
             <div class="bubble-text" v-html="msg.content.replace(/\n/g, '<br/>')"></div>
@@ -66,6 +66,38 @@
           <div class="avatar-wrap">
             <img :src="aiAvatar" alt="" class="avatar-img" />
           </div>
+        </div>
+
+        <!-- 对方发图片 (type:3) -->
+        <div v-else-if="msg.type === 3" class="msg-row user">
+          <div class="avatar-wrap">
+            <img :src="characterAvatar" alt="" class="avatar-img" />
+          </div>
+          <div class="bubble user-bubble image-bubble">
+            <span class="triangle user-tri"></span>
+            <img :src="msg.imageUrl" alt="" class="msg-image" />
+          </div>
+        </div>
+
+        <!-- 自己发图片 (type:4) -->
+        <div v-else-if="msg.type === 4" class="msg-row ai">
+          <div class="bubble ai-bubble image-bubble">
+            <span class="triangle ai-tri"></span>
+            <img :src="msg.imageUrl" alt="" class="msg-image" />
+          </div>
+          <div class="avatar-wrap">
+            <img :src="aiAvatar" alt="" class="avatar-img" />
+          </div>
+        </div>
+
+        <!-- 动态 (type:5) -->
+        <div v-else-if="msg.type === 5" class="dynamic-msg">
+          <div class="dynamic-content">{{ msg.content }}</div>
+        </div>
+
+        <!-- 结局 (type:7) -->
+        <div v-else-if="msg.type === 7" class="ending-msg">
+          <div class="ending-content">{{ msg.content }}</div>
         </div>
       </template>
 
@@ -142,6 +174,33 @@
           </div>
         </div>
 
+        <!-- 保存/加载系统 (3插槽) -->
+        <div class="save-panel">
+          <div class="section-title">存档管理</div>
+          <div class="save-slots">
+            <div 
+              v-for="slot in saveSlots" 
+              :key="slot.id"
+              class="save-slot"
+              :class="{ empty: !slot.timestamp }"
+              @click="handleSaveSlot(slot.id)"
+            >
+              <div class="slot-header">
+                <span class="slot-label">插槽 {{ slot.id }}</span>
+                <span v-if="slot.timestamp" class="slot-time">{{ formatSaveTime(slot.timestamp) }}</span>
+                <span v-else class="slot-empty">空</span>
+              </div>
+              <div v-if="slot.timestamp" class="slot-info">
+                <span class="slot-scene">{{ slot.sceneTitle }}</span>
+                <span class="slot-stats">共谋值:{{ slot.stats.complicity }} 道德值:{{ slot.stats.morality }}</span>
+              </div>
+              <div v-else class="slot-action">
+                {{ slot.id === 1 ? '自动存档' : '点击保存' }}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- 功能列表 -->
         <van-cell-group :border="false" inset>
           <van-cell title="相册" icon="photo-o" is-link @click="navigate('/gallery')" />
@@ -178,7 +237,6 @@
               <van-switch v-model="isDarkMode" size="20" @change="toggleDarkMode" />
             </template>
           </van-cell>
-          <van-cell title="保存进度" icon="passed" @click="saveGame" />
           <van-cell title="重置游戏" icon="replay" @click="confirmReset" class="danger-cell" />
         </van-cell-group>
       </div>
@@ -212,7 +270,7 @@
 import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast, showDialog } from 'vant'
-import DialogueEngine from '@/engine/dialogue'
+import DialogueEngine from '@/engine/dialogue.js'
 import AudioManager from '@/engine/audioManager'
 import { useGameStore } from '@/stores/game'
 
@@ -233,6 +291,13 @@ const aiAvatar = ref('/images/avatar-ai.png')
 const isOnline = ref(true)
 const showAbout = ref(false)
 
+// 保存插槽数据
+const saveSlots = ref([
+  { id: 1, timestamp: null, sceneId: null, sceneTitle: '', stats: { complicity: 20, morality: 60, suspicion: 10 } },
+  { id: 2, timestamp: null, sceneId: null, sceneTitle: '', stats: { complicity: 20, morality: 60, suspicion: 10 } },
+  { id: 3, timestamp: null, sceneId: null, sceneTitle: '', stats: { complicity: 20, morality: 60, suspicion: 10 } }
+])
+
 // 人物数据
 const characters = ref([
   { id: 'ye', name: '叶晓阳', title: '32岁 · 销售 · 已婚', avatar: '/images/avatar-ye.png', unlocked: true, bio: '主角，三十二岁，在H城做销售。已婚，有一个三岁的女儿糖糖。' },
@@ -242,9 +307,9 @@ const characters = ref([
 ])
 
 const stats = reactive({
-  共谋值: 20,
-  道德值: 60,
-  怀疑值: 10
+  complicity: 20,
+  morality: 60,
+  suspicion: 10
 })
 
 const dayLabels = {
@@ -257,90 +322,120 @@ const dayLabels = {
 const currentDayLabel = computed(() => dayLabels[currentDay.value] || `第${currentDay.value}天`)
 const statusText = computed(() => isOnline.value ? '在线' : '离线')
 
-onMounted(() => {
+onMounted(async () => {
   const savedTheme = localStorage.getItem('night-city-theme')
   isDarkMode.value = savedTheme === 'dark'
 
-  // 加载游戏
-  const loaded = DialogueEngine.loadGame()
+  // 初始化引擎（加载manifest.json）
+  await DialogueEngine.init()
   
-  if (loaded && DialogueEngine.chapterData) {
-    // 恢复：直接跳到保存的位置
-    restoreGameState()
+  // 尝试恢复游戏状态
+  const loaded = await DialogueEngine.loadProgress(1)  // 默认加载插槽1（自动存档）
+  
+  if (loaded) {
+    // 恢复：显示保存位置的消息
+    await restoreFromSave()
   } else {
-    // 新游戏：加载剧本
-    loadChapter()
+    // 新游戏：开始第一章第一节
+    await startNewGame()
   }
 
   // 恢复BGM
   const savedBGM = localStorage.getItem('night-city-bgm')
   AudioManager.playBGM(savedBGM || 'chat', true)
+  
+  // 加载存档列表
+  loadSaveSlots()
 })
 
-// === 加载剧本 ===
-async function loadChapter() {
+// === 开始新游戏 ===
+async function startNewGame() {
   try {
-    const res = await fetch('/data/chapter1.json')
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    const data = await res.json()
+    // 开始第一章第一节
+    await DialogueEngine.startDialogue('scene_001', 'msg_001')
     
-    DialogueEngine.loadChapter(data)
-
     // 显示第一条消息
-    DialogueEngine.currentMessageIdx = 0
-    const firstMsg = DialogueEngine.getCurrentMessage()
-    if (firstMsg?.content) {
-      addMessage(firstMsg)
+    const currentMsg = DialogueEngine.getCurrentMessage()
+    if (currentMsg) {
+      await displayMessage(currentMsg)
     }
-
+    
     // 显示选项（如果有）
     showChoices()
+    
+    // 自动保存到插槽1
+    await DialogueEngine.saveProgress(1)
+    loadSaveSlots()
   } catch (err) {
-    showToast('剧情加载失败: ' + err.message)
+    showToast('游戏启动失败: ' + err.message)
   }
 }
 
 // === 恢复游戏状态 ===
-function restoreGameState() {
-  // 重建消息历史
-  const history = DialogueEngine.history
-  
-  if (history.length === 0) {
-    // 无历史：显示当前消息
-    const msg = DialogueEngine.getCurrentMessage()
-    if (msg?.content) {
-      addMessage(msg)
+async function restoreFromSave() {
+  try {
+    // 获取当前消息
+    const currentMsg = DialogueEngine.getCurrentMessage()
+    
+    // 重建消息历史（显示最后10条）
+    const history = DialogueEngine.getHistory()
+    for (const h of history.slice(-10)) {
+      // 显示历史消息
+      const sceneId = h.sceneId || DialogueEngine.currentSceneId
+      const node = await DialogueEngine.getNode(sceneId, h.nodeId)
+      if (node) {
+        messages.value.push({
+          ...node,
+          timestamp: h.timestamp || Date.now()
+        })
+      }
     }
+    
+    // 显示当前消息
+    if (currentMsg) {
+      messages.value.push({
+        ...currentMsg,
+        timestamp: Date.now()
+      })
+    }
+    
+    // 显示选项
     showChoices()
-    return
+    
+    showToast('进度已恢复')
+  } catch (err) {
+    showToast('恢复失败: ' + err.message)
+    // 如果恢复失败，开始新游戏
+    await startNewGame()
   }
+}
 
-  // 重建历史消息（简化版：只显示最后几条）
-  for (const h of history.slice(-10)) {
-    // 显示AI回复
-    const msg = DialogueEngine.chapterData.scenes[h.sceneIdx]?.messages[h.messageIdx]
-    if (msg?.content) {
-      addMessage(msg)
-    }
-    // 显示玩家选择
-    addMessage({ speaker: '叶晓阳', content: h.choiceText }, 'user')
-  }
-
-  // 显示当前消息
-  const currentMsg = DialogueEngine.getCurrentMessage()
-  if (currentMsg?.content) {
-    addMessage(currentMsg)
-  }
-
-  // 显示选项
-  showChoices()
+// === 显示消息 ===
+async function displayMessage(msg) {
+  if (!msg || !msg.content) return
+  
+  // 添加到消息列表
+  messages.value.push({
+    ...msg,
+    timestamp: Date.now()
+  })
+  
+  // 滚动到底部
+  scrollToBottom()
+  
+  // 等待显示时间（模拟阅读）
+  await delay(calcWaitTime(msg.content))
 }
 
 // === 显示选项 ===
 function showChoices() {
-  const choices = DialogueEngine.getAvailableChoices()
-  if (choices.length) {
-    currentChoices.value = choices.map(c => ({ text: c.text, type: c.type || 'primary' }))
+  const choices = DialogueEngine.getCurrentChoices()
+  if (choices && choices.length > 0) {
+    currentChoices.value = choices.map(c => ({ 
+      text: c.text, 
+      type: c.type || 'primary',
+      effects: c.effects || {}
+    }))
     isWaiting.value = false
   } else {
     // 无选项，自动推进
@@ -352,26 +447,25 @@ function showChoices() {
 async function autoPlay() {
   let msg = DialogueEngine.getCurrentMessage()
   
-  while (msg && !msg.choices?.length) {
+  while (msg && (!msg.choices || msg.choices.length === 0)) {
     // 显示消息
     isTyping.value = true
     await delay(600 + Math.random() * 400)
     isTyping.value = false
     
-    addMessage(msg)
-    await delay(calcWaitTime(msg.content))
+    await displayMessage(msg)
     
     // 推进到下一条
-    DialogueEngine.advance()
+    await DialogueEngine.advance()
     msg = DialogueEngine.getCurrentMessage()
   }
   
   // 显示选项（如果有）
-  if (msg?.choices?.length) {
+  if (msg && msg.choices && msg.choices.length > 0) {
     showChoices()
   } else if (!msg) {
     isWaiting.value = false
-    addMessage({ speaker: 'system', content: '（剧情结束）' })
+    addMessage({ type: 6, content: '（剧情结束）' })
   }
 }
 
@@ -380,7 +474,9 @@ async function makeChoice(index) {
   AudioManager.playSFX?.('click')
 
   const choice = currentChoices.value[index]
-  addMessage({ speaker: '叶晓阳', content: choice.text }, 'user')
+  
+  // 显示玩家选择（我方发言，type:2）
+  addMessage({ type: 2, content: choice.text })
   
   currentChoices.value = []
   isWaiting.value = true
@@ -391,54 +487,95 @@ async function makeChoice(index) {
   isTyping.value = false
 
   // 应用选择
-  const nextMsg = DialogueEngine.makeChoice(index)
+  const nextMsg = await DialogueEngine.makeChoice(index)
   
   // 更新数值显示
   updateStatsDisplay()
 
-  // 保存
-  DialogueEngine.saveGame()
+  // 自动保存到插槽1
+  await DialogueEngine.saveProgress(1)
+  loadSaveSlots()
 
   // 显示下一条消息
-  if (nextMsg?.content) {
-    addMessage(nextMsg)
+  if (nextMsg) {
+    await displayMessage(nextMsg)
     await delay(calcWaitTime(nextMsg.content))
   }
 
   // 继续自动播放或显示选项
-  if (!nextMsg?.choices?.length) {
-    DialogueEngine.advance()
+  const currentMsg = DialogueEngine.getCurrentMessage()
+  if (currentMsg && currentMsg.choices && currentMsg.choices.length > 0) {
+    showChoices()
+  } else if (currentMsg) {
+    await DialogueEngine.advance()
     autoPlay()
   } else {
-    showChoices()
+    isWaiting.value = false
   }
 }
 
 // === 添加消息 ===
-function addMessage(msgData, forceRole = null) {
-  const role = forceRole || (msgData.speaker === 'AI' ? 'assistant' : 'user')
-  const content = msgData.content || ''
-  
+function addMessage(msgData) {
   messages.value.push({
-    role,
-    content,
+    ...msgData,
     timestamp: Date.now()
   })
-
-  // 同步最新AI消息
-  if (role === 'assistant') {
-    gameStore.lastAssistantMessage = content
-  }
-
+  
   scrollToBottom()
 }
 
 // === 更新数值显示 ===
 function updateStatsDisplay() {
   const engineStats = DialogueEngine.getStats()
-  stats.共谋值 = engineStats.共谋值 || 20
-  stats.道德值 = engineStats.道德值 || 60
-  stats.怀疑值 = engineStats.怀疑值 || 10
+  stats.complicity = engineStats.complicity || 20
+  stats.morality = engineStats.morality || 60
+  stats.suspicion = engineStats.suspicion || 10
+}
+
+// === 保存/加载系统 ===
+
+// 加载存档列表
+function loadSaveSlots() {
+  const saves = DialogueEngine.getAllSaves()
+  for (const save of saves) {
+    const slot = saveSlots.value.find(s => s.id === save.slotId)
+    if (slot) {
+      slot.timestamp = save.timestamp
+      slot.sceneId = save.currentSceneId
+      slot.sceneTitle = save.sceneTitle || ''
+      slot.stats = save.stats || { complicity: 20, morality: 60, suspicion: 10 }
+    }
+  }
+}
+
+// 处理保存插槽点击
+async function handleSaveSlot(slotId) {
+  if (slotId === 1) {
+    // 插槽1是自动存档，不允许手动覆盖
+    showToast('插槽1是自动存档，不可手动覆盖')
+    return
+  }
+  
+  const slot = saveSlots.value.find(s => s.id === slotId)
+  if (slot.timestamp) {
+    // 已有存档，询问是否覆盖
+    showDialog({
+      title: '覆盖存档',
+      message: `插槽${slotId}已有存档，是否覆盖？`,
+      showCancelButton: true,
+      confirmButtonText: '覆盖',
+      cancelButtonText: '取消'
+    }).then(async () => {
+      await DialogueEngine.saveProgress(slotId)
+      loadSaveSlots()
+      showToast(`已保存到插槽${slotId}`)
+    }).catch(() => {})
+  } else {
+    // 空插槽，直接保存
+    await DialogueEngine.saveProgress(slotId)
+    loadSaveSlots()
+    showToast(`已保存到插槽${slotId}`)
+  }
 }
 
 // === 工具函数 ===
@@ -473,6 +610,12 @@ function formatTime(ts) {
   return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
 }
 
+function formatSaveTime(ts) {
+  if (!ts) return ''
+  const d = new Date(ts)
+  return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
+}
+
 function onScroll() {}
 
 // === 导航 ===
@@ -484,12 +627,6 @@ function goBack() {
 function navigate(path) {
   showMenu.value = false
   router.push(path)
-}
-
-function saveGame() {
-  DialogueEngine.saveGame()
-  showToast('进度已保存')
-  showMenu.value = false
 }
 
 function selectCharacter(char) {
@@ -512,11 +649,11 @@ function confirmReset() {
     DialogueEngine.resetGame()
     messages.value = []
     currentChoices.value = []
-    stats.共谋值 = 20
-    stats.道德值 = 60
-    stats.怀疑值 = 10
+    stats.complicity = 20
+    stats.morality = 60
+    stats.suspicion = 10
     currentDay.value = 1
-    loadChapter()
+    startNewGame()
     showToast('已重置')
   }).catch(() => {})
 }
@@ -542,13 +679,13 @@ function toggleDarkMode() {
 /* === 导航栏 === */
 .chat-navbar {
   background: var(--bg-navbar) !important;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom:1px solid var(--border-color);
 }
 .navbar-title {
   display: flex;
   flex-direction: column;
   align-items: center;
-  line-height: 1.3;
+  line-height:1.3;
 }
 .navbar-title .name {
   font-size: 16px;
@@ -565,7 +702,7 @@ function toggleDarkMode() {
 
 /* === 聊天主体 === */
 .chat-body {
-  flex: 1;
+  flex:1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding: 8px 16px;
@@ -589,7 +726,7 @@ function toggleDarkMode() {
   top: 50%;
   left: 0;
   right: 0;
-  height: 1px;
+  height:1px;
   background: var(--border-color);
 }
 .day-divider span,
@@ -604,7 +741,7 @@ function toggleDarkMode() {
   font-weight: 500;
   color: var(--text-primary);
   font-size: 13px;
-  letter-spacing: 1px;
+  letter-spacing:1px;
 }
 
 /* === 系统消息 === */
@@ -632,8 +769,8 @@ function toggleDarkMode() {
 }
 
 @keyframes msgIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity:0; transform: translateY(8px); }
+  to { opacity:1; transform: translateY(0); }
 }
 
 /* === 头像 === */
@@ -674,6 +811,17 @@ function toggleDarkMode() {
   color: #e0e0e0;
 }
 
+/* 图片气泡 */
+.image-bubble {
+  padding: 6px;
+  max-width: 60%;
+}
+.msg-image {
+  max-width: 200px;
+  max-height: 300px;
+  border-radius: 4px;
+}
+
 /* 三角箭头 */
 .triangle {
   position: absolute;
@@ -692,6 +840,33 @@ function toggleDarkMode() {
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
   border-left: 6px solid var(--bg-message-user);
+}
+
+/* === 动态消息 === */
+.dynamic-msg {
+  margin: 12px 0;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  text-align: center;
+}
+.dynamic-content {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* === 结局消息 === */
+.ending-msg {
+  margin: 20px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  text-align: center;
+  color: #fff;
+}
+.ending-content {
+  font-size: 18px;
+  font-weight: 600;
 }
 
 /* === 正在输入 === */
@@ -721,13 +896,13 @@ function toggleDarkMode() {
 .choices-area {
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
   background: var(--bg-primary);
-  border-top: 1px solid var(--border-color);
+  border-top:1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 .choice-btn {
-  width: 100%;
+  width:100%;
   border: none;
   padding: 14px 16px;
   border-radius: 8px;
@@ -740,7 +915,7 @@ function toggleDarkMode() {
 }
 .choice-btn:active {
   transform: scale(0.98);
-  opacity: 0.85;
+  opacity:0.85;
 }
 .choice-btn.primary {
   background: var(--bg-message-assistant);
@@ -767,7 +942,7 @@ function toggleDarkMode() {
 .waiting-area {
   padding: 16px calc(16px + env(safe-area-inset-bottom));
   background: var(--bg-primary);
-  border-top: 1px solid var(--border-color);
+  border-top:1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -815,7 +990,7 @@ function toggleDarkMode() {
 .menu-desc {
   font-size: 13px;
   color: var(--text-secondary);
-  margin-top: 4px;
+  margin-top:4px;
 }
 
 /* 数值面板 */
@@ -837,7 +1012,7 @@ function toggleDarkMode() {
   flex-shrink: 0;
 }
 .stat-bar {
-  flex: 1;
+  flex:1;
   height: 6px;
   background: var(--border-color);
   border-radius: 3px;
@@ -857,6 +1032,67 @@ function toggleDarkMode() {
   color: var(--text-primary);
   width: 28px;
   text-align: right;
+}
+
+/* 保存面板 */
+.save-panel {
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+.save-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.save-slot {
+  padding: 12px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.save-slot:active {
+  transform: scale(0.98);
+}
+.save-slot.empty {
+  opacity: 0.6;
+}
+.slot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.slot-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.slot-time {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.slot-empty {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+.slot-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.slot-scene {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.slot-stats {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+.slot-action {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
 }
 
 .danger-cell :deep(.van-cell__title) {

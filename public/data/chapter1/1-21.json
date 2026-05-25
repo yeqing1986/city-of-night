@@ -1,0 +1,208 @@
+{
+  "sceneId": "1-21",
+  "title": "工作走神",
+  "nodes": [
+    {
+      "id": "1-21_msg_001",
+      "type": 1,
+      "content": "小七",
+      "delay": 0,
+      "next": "1-21_msg_002"
+    },
+    {
+      "id": "1-21_msg_002",
+      "type": 1,
+      "content": "上班的时候",
+      "delay": 0,
+      "next": "1-21_msg_003"
+    },
+    {
+      "id": "1-21_msg_003",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-21_msg_004"
+    },
+    {
+      "id": "1-21_msg_004",
+      "type": 1,
+      "content": "走神了",
+      "delay": 0,
+      "next": "1-21_msg_005"
+    },
+    {
+      "id": "1-21_msg_005",
+      "type": 1,
+      "content": "在想",
+      "delay": 0,
+      "next": "1-21_msg_006"
+    },
+    {
+      "id": "1-21_msg_006",
+      "type": 1,
+      "content": "明天晚上的电影",
+      "delay": 0,
+      "next": "1-21_msg_007"
+    },
+    {
+      "id": "1-21_msg_007",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-21_msg_008"
+    },
+    {
+      "id": "1-21_msg_008",
+      "type": 1,
+      "content": "有点",
+      "delay": 0,
+      "next": "1-21_msg_009"
+    },
+    {
+      "id": "1-21_msg_009",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-21_msg_010"
+    },
+    {
+      "id": "1-21_msg_010",
+      "type": 1,
+      "content": "期待",
+      "delay": 0,
+      "next": "1-21_msg_011"
+    },
+    {
+      "id": "1-21_msg_011",
+      "type": 1,
+      "content": "期待",
+      "delay": 0,
+      "next": "1-21_msg_012"
+    },
+    {
+      "id": "1-21_msg_012",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-21_msg_013"
+    },
+    {
+      "id": "1-21_msg_013",
+      "type": 1,
+      "content": "有人陪我",
+      "delay": 0,
+      "next": "1-21_msg_014"
+    },
+    {
+      "id": "1-21_msg_014",
+      "type": 1,
+      "content": "看电影",
+      "delay": 0,
+      "next": "1-21_msg_015"
+    },
+    {
+      "id": "1-21_msg_015",
+      "type": 1,
+      "content": "有人",
+      "delay": 0,
+      "next": "1-21_msg_016"
+    },
+    {
+      "id": "1-21_msg_016",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-21_msg_017"
+    },
+    {
+      "id": "1-21_msg_017",
+      "type": 1,
+      "content": "愿意跟我一起",
+      "delay": 0,
+      "next": "1-21_msg_018"
+    },
+    {
+      "id": "1-21_msg_018",
+      "type": 1,
+      "content": "不愿意",
+      "delay": 0,
+      "next": "1-21_msg_019"
+    },
+    {
+      "id": "1-21_msg_019",
+      "type": 1,
+      "content": "她总说",
+      "delay": 0,
+      "next": "1-21_msg_020"
+    },
+    {
+      "id": "1-21_msg_020",
+      "type": 1,
+      "content": "\"没时间\"",
+      "delay": 0,
+      "next": "1-21_msg_021"
+    },
+    {
+      "id": "1-21_msg_021",
+      "type": 1,
+      "content": "\"要带孩子\"",
+      "delay": 0,
+      "next": "1-21_msg_022"
+    },
+    {
+      "id": "1-21_msg_022",
+      "type": 1,
+      "content": "上次",
+      "delay": 0,
+      "next": "1-21_msg_023"
+    },
+    {
+      "id": "1-21_msg_023",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-21_msg_024"
+    },
+    {
+      "id": "1-21_msg_024",
+      "type": 1,
+      "content": "不记得了",
+      "delay": 0,
+      "next": "1-21_msg_025"
+    },
+    {
+      "id": "1-21_msg_025",
+      "type": 1,
+      "content": "不记得了",
+      "delay": 0,
+      "next": "1-21_msg_026"
+    },
+    {
+      "id": "1-21_msg_026",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-21_msg_027"
+    },
+    {
+      "id": "1-21_msg_027",
+      "type": 1,
+      "content": "好像",
+      "delay": 0,
+      "next": "1-21_msg_028"
+    },
+    {
+      "id": "1-21_msg_028",
+      "type": 1,
+      "content": "很久没有",
+      "delay": 0,
+      "next": "1-21_msg_029"
+    },
+    {
+      "id": "1-21_msg_029",
+      "type": 1,
+      "content": "被人约了",
+      "delay": 0
+    }
+  ]
+}

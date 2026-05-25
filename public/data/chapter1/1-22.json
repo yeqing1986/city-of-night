@@ -1,0 +1,215 @@
+{
+  "sceneId": "1-22",
+  "title": "午休的短信",
+  "nodes": [
+    {
+      "id": "1-22_msg_001",
+      "type": 1,
+      "content": "小七",
+      "delay": 0,
+      "next": "1-22_msg_002"
+    },
+    {
+      "id": "1-22_msg_002",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-22_msg_003"
+    },
+    {
+      "id": "1-22_msg_003",
+      "type": 1,
+      "content": "周颖发了短信来",
+      "delay": 0,
+      "next": "1-22_msg_004"
+    },
+    {
+      "id": "1-22_msg_004",
+      "type": 1,
+      "content": "她说",
+      "delay": 0,
+      "next": "1-22_msg_005"
+    },
+    {
+      "id": "1-22_msg_005",
+      "type": 1,
+      "content": "\"明天晚上七点，电影院门口见\"",
+      "delay": 0,
+      "next": "1-22_msg_006"
+    },
+    {
+      "id": "1-22_msg_006",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-22_msg_007"
+    },
+    {
+      "id": "1-22_msg_007",
+      "type": 1,
+      "content": "我问她",
+      "delay": 0,
+      "next": "1-22_msg_008"
+    },
+    {
+      "id": "1-22_msg_008",
+      "type": 1,
+      "content": "\"什么电影\"",
+      "delay": 0,
+      "next": "1-22_msg_009"
+    },
+    {
+      "id": "1-22_msg_009",
+      "type": 1,
+      "content": "她说",
+      "delay": 0,
+      "next": "1-22_msg_010"
+    },
+    {
+      "id": "1-22_msg_010",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-22_msg_011"
+    },
+    {
+      "id": "1-22_msg_011",
+      "type": 1,
+      "content": "\"你来了就知道了\"",
+      "delay": 0,
+      "next": "1-22_msg_012"
+    },
+    {
+      "id": "1-22_msg_012",
+      "type": 1,
+      "content": "感觉",
+      "delay": 0,
+      "next": "1-22_msg_013"
+    },
+    {
+      "id": "1-22_msg_013",
+      "type": 1,
+      "content": "有点",
+      "delay": 0,
+      "next": "1-22_msg_014"
+    },
+    {
+      "id": "1-22_msg_014",
+      "type": 1,
+      "content": "心跳加速",
+      "delay": 0,
+      "next": "1-22_msg_015"
+    },
+    {
+      "id": "1-22_msg_015",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-22_msg_016"
+    },
+    {
+      "id": "1-22_msg_016",
+      "type": 1,
+      "content": "有点",
+      "delay": 0,
+      "next": "1-22_msg_017"
+    },
+    {
+      "id": "1-22_msg_017",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-22_msg_018"
+    },
+    {
+      "id": "1-22_msg_018",
+      "type": 1,
+      "content": "刺激",
+      "delay": 0,
+      "next": "1-22_msg_019"
+    },
+    {
+      "id": "1-22_msg_019",
+      "type": 1,
+      "content": "紧张",
+      "delay": 0,
+      "next": "1-22_msg_020"
+    },
+    {
+      "id": "1-22_msg_020",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-22_msg_021"
+    },
+    {
+      "id": "1-22_msg_021",
+      "type": 1,
+      "content": "第一次",
+      "delay": 0,
+      "next": "1-22_msg_022"
+    },
+    {
+      "id": "1-22_msg_022",
+      "type": 1,
+      "content": "跟别的女人",
+      "delay": 0,
+      "next": "1-22_msg_023"
+    },
+    {
+      "id": "1-22_msg_023",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-22_msg_024"
+    },
+    {
+      "id": "1-22_msg_024",
+      "type": 1,
+      "content": "单独看电影",
+      "delay": 0,
+      "next": "1-22_msg_025"
+    },
+    {
+      "id": "1-22_msg_025",
+      "type": 1,
+      "content": "有",
+      "delay": 0,
+      "next": "1-22_msg_026"
+    },
+    {
+      "id": "1-22_msg_026",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-22_msg_027"
+    },
+    {
+      "id": "1-22_msg_027",
+      "type": 1,
+      "content": "控制不住",
+      "delay": 0,
+      "next": "1-22_msg_028"
+    },
+    {
+      "id": "1-22_msg_028",
+      "type": 1,
+      "content": "想去的冲动",
+      "delay": 0,
+      "next": "1-22_msg_029"
+    },
+    {
+      "id": "1-22_msg_029",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-22_msg_030"
+    },
+    {
+      "id": "1-22_msg_030",
+      "type": 1,
+      "content": "又有罪恶感",
+      "delay": 0
+    }
+  ]
+}

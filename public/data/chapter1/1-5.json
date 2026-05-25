@@ -1,0 +1,964 @@
+{
+  "sceneId": "1-5",
+  "title": "下午的偶遇",
+  "nodes": [
+    {
+      "id": "1-5_msg_001",
+      "type": 1,
+      "content": "小七",
+      "delay": 0,
+      "next": "1-5_msg_002"
+    },
+    {
+      "id": "1-5_msg_002",
+      "type": 1,
+      "content": "刚才",
+      "delay": 0,
+      "next": "1-5_msg_003"
+    },
+    {
+      "id": "1-5_msg_003",
+      "type": 1,
+      "content": "在电梯里",
+      "delay": 0,
+      "next": "1-5_msg_004"
+    },
+    {
+      "id": "1-5_msg_004",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_005"
+    },
+    {
+      "id": "1-5_msg_005",
+      "type": 1,
+      "content": "遇到了周颖",
+      "delay": 0,
+      "next": "1-5_msg_006"
+    },
+    {
+      "id": "1-5_msg_006",
+      "type": 1,
+      "content": "是啊",
+      "delay": 0,
+      "next": "1-5_msg_007"
+    },
+    {
+      "id": "1-5_msg_007",
+      "type": 1,
+      "content": "她今天第一天来公司",
+      "delay": 0,
+      "next": "1-5_msg_008"
+    },
+    {
+      "id": "1-5_msg_008",
+      "type": 1,
+      "content": "我才知道她真的在我们公司",
+      "delay": 0,
+      "next": "1-5_msg_009"
+    },
+    {
+      "id": "1-5_msg_009",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_010"
+    },
+    {
+      "id": "1-5_msg_010",
+      "type": 1,
+      "content": "不是骗我的",
+      "delay": 0,
+      "next": "1-5_msg_011"
+    },
+    {
+      "id": "1-5_msg_011",
+      "type": 1,
+      "content": "她没有骗我",
+      "delay": 0,
+      "next": "1-5_msg_012"
+    },
+    {
+      "id": "1-5_msg_012",
+      "type": 1,
+      "content": "我就是",
+      "delay": 0,
+      "next": "1-5_msg_013"
+    },
+    {
+      "id": "1-5_msg_013",
+      "type": 1,
+      "content": "有点惊讶",
+      "delay": 0,
+      "next": "1-5_msg_014"
+    },
+    {
+      "id": "1-5_msg_014",
+      "type": 1,
+      "content": "没想到",
+      "delay": 0,
+      "next": "1-5_msg_015"
+    },
+    {
+      "id": "1-5_msg_015",
+      "type": 1,
+      "content": "真的是同事",
+      "delay": 0,
+      "next": "1-5_msg_016"
+    },
+    {
+      "id": "1-5_msg_016",
+      "type": 1,
+      "content": "电梯里",
+      "delay": 0,
+      "next": "1-5_msg_017"
+    },
+    {
+      "id": "1-5_msg_017",
+      "type": 1,
+      "content": "她看到我",
+      "delay": 0,
+      "next": "1-5_msg_018"
+    },
+    {
+      "id": "1-5_msg_018",
+      "type": 1,
+      "content": "笑了",
+      "delay": 0,
+      "next": "1-5_msg_019"
+    },
+    {
+      "id": "1-5_msg_019",
+      "type": 1,
+      "content": "说\"早啊，邻居\"",
+      "delay": 0,
+      "next": "1-5_msg_020"
+    },
+    {
+      "id": "1-5_msg_020",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_021"
+    },
+    {
+      "id": "1-5_msg_021",
+      "type": 1,
+      "content": "声音很好听",
+      "delay": 0,
+      "next": "1-5_msg_022"
+    },
+    {
+      "id": "1-5_msg_022",
+      "type": 1,
+      "content": "聊了几句",
+      "delay": 0,
+      "next": "1-5_msg_023"
+    },
+    {
+      "id": "1-5_msg_023",
+      "type": 1,
+      "content": "她问我哪个部门",
+      "delay": 0,
+      "next": "1-5_msg_024"
+    },
+    {
+      "id": "1-5_msg_024",
+      "type": 1,
+      "content": "我说销售部",
+      "delay": 0,
+      "next": "1-5_msg_025"
+    },
+    {
+      "id": "1-5_msg_025",
+      "type": 1,
+      "content": "她说她在人事部",
+      "delay": 0,
+      "next": "1-5_msg_026"
+    },
+    {
+      "id": "1-5_msg_026",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-5_msg_027"
+    },
+    {
+      "id": "1-5_msg_027",
+      "type": 1,
+      "content": "她说",
+      "delay": 0,
+      "next": "1-5_msg_028"
+    },
+    {
+      "id": "1-5_msg_028",
+      "type": 1,
+      "content": "\"你昨晚帮我搬箱子，辛苦了\"",
+      "delay": 0,
+      "next": "1-5_msg_029"
+    },
+    {
+      "id": "1-5_msg_029",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_030"
+    },
+    {
+      "id": "1-5_msg_030",
+      "type": 1,
+      "content": "又说了一声谢谢",
+      "delay": 0,
+      "next": "1-5_msg_031"
+    },
+    {
+      "id": "1-5_msg_031",
+      "type": 1,
+      "content": "感觉",
+      "delay": 0,
+      "next": "1-5_msg_032"
+    },
+    {
+      "id": "1-5_msg_032",
+      "type": 1,
+      "content": "挺好的",
+      "delay": 0,
+      "next": "1-5_msg_033"
+    },
+    {
+      "id": "1-5_msg_033",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-5_msg_034"
+    },
+    {
+      "id": "1-5_msg_034",
+      "type": 1,
+      "content": "有点不好意思",
+      "delay": 0,
+      "next": "1-5_msg_035"
+    },
+    {
+      "id": "1-5_msg_035",
+      "type": 1,
+      "content": "帮忙而已",
+      "delay": 0,
+      "next": "1-5_msg_036"
+    },
+    {
+      "id": "1-5_msg_036",
+      "type": 1,
+      "content": "不用一直说谢谢",
+      "delay": 0,
+      "next": "1-5_msg_037"
+    },
+    {
+      "id": "1-5_msg_037",
+      "type": 1,
+      "content": "但她说谢谢的时候",
+      "delay": 0,
+      "next": "1-5_msg_038"
+    },
+    {
+      "id": "1-5_msg_038",
+      "type": 1,
+      "content": "眼睛看着我",
+      "delay": 0,
+      "next": "1-5_msg_039"
+    },
+    {
+      "id": "1-5_msg_039",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_040"
+    },
+    {
+      "id": "1-5_msg_040",
+      "type": 1,
+      "content": "好像真的在意这件事",
+      "delay": 0,
+      "next": "1-5_msg_041"
+    },
+    {
+      "id": "1-5_msg_041",
+      "type": 1,
+      "content": "说了几句",
+      "delay": 0,
+      "next": "1-5_msg_042"
+    },
+    {
+      "id": "1-5_msg_042",
+      "type": 1,
+      "content": "她问我来这里多久了",
+      "delay": 0,
+      "next": "1-5_msg_043"
+    },
+    {
+      "id": "1-5_msg_043",
+      "type": 1,
+      "content": "我说三年了",
+      "delay": 0,
+      "next": "1-5_msg_044"
+    },
+    {
+      "id": "1-5_msg_044",
+      "type": 1,
+      "content": "她说\"那我以后有什么不懂的，可以问你吗\"",
+      "delay": 0,
+      "next": "1-5_msg_045"
+    },
+    {
+      "id": "1-5_msg_045",
+      "type": 1,
+      "content": "我说可以",
+      "delay": 0,
+      "next": "1-5_msg_046"
+    },
+    {
+      "id": "1-5_msg_046",
+      "type": 1,
+      "content": "然后电梯就到了",
+      "delay": 0,
+      "next": "1-5_msg_047"
+    },
+    {
+      "id": "1-5_msg_047",
+      "type": 1,
+      "content": "她走出去的时候",
+      "delay": 0,
+      "next": "1-5_msg_048"
+    },
+    {
+      "id": "1-5_msg_048",
+      "type": 1,
+      "content": "又回头看了我一眼",
+      "delay": 0,
+      "next": "1-5_msg_049"
+    },
+    {
+      "id": "1-5_msg_049",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_050"
+    },
+    {
+      "id": "1-5_msg_050",
+      "type": 1,
+      "content": "笑了笑",
+      "delay": 0,
+      "next": "1-5_msg_051"
+    },
+    {
+      "id": "1-5_msg_051",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-5_msg_052"
+    },
+    {
+      "id": "1-5_msg_052",
+      "type": 1,
+      "content": "挺正常的",
+      "delay": 0,
+      "next": "1-5_msg_053"
+    },
+    {
+      "id": "1-5_msg_053",
+      "type": 1,
+      "content": "同事之间的问候",
+      "delay": 0,
+      "next": "1-5_msg_054"
+    },
+    {
+      "id": "1-5_msg_054",
+      "type": 1,
+      "content": "没有什么特别的",
+      "delay": 0,
+      "next": "1-5_msg_055"
+    },
+    {
+      "id": "1-5_msg_055",
+      "type": 1,
+      "content": "只是",
+      "delay": 0,
+      "next": "1-5_msg_056"
+    },
+    {
+      "id": "1-5_msg_056",
+      "type": 1,
+      "content": "她笑起来",
+      "delay": 0,
+      "next": "1-5_msg_057"
+    },
+    {
+      "id": "1-5_msg_057",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_058"
+    },
+    {
+      "id": "1-5_msg_058",
+      "type": 1,
+      "content": "挺好看的",
+      "delay": 0,
+      "next": "1-5_msg_059"
+    },
+    {
+      "id": "1-5_msg_059",
+      "type": 1,
+      "content": "没有特意跟你说",
+      "delay": 0,
+      "next": "1-5_msg_060"
+    },
+    {
+      "id": "1-5_msg_060",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-5_msg_061"
+    },
+    {
+      "id": "1-5_msg_061",
+      "type": 1,
+      "content": "刚好发生了",
+      "delay": 0,
+      "next": "1-5_msg_062"
+    },
+    {
+      "id": "1-5_msg_062",
+      "type": 1,
+      "content": "就说了",
+      "delay": 0,
+      "next": "1-5_msg_063"
+    },
+    {
+      "id": "1-5_msg_063",
+      "type": 1,
+      "content": "老婆不知道",
+      "delay": 0,
+      "next": "1-5_msg_064"
+    },
+    {
+      "id": "1-5_msg_064",
+      "type": 1,
+      "content": "为什么要告诉她",
+      "delay": 0,
+      "next": "1-5_msg_065"
+    },
+    {
+      "id": "1-5_msg_065",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_066"
+    },
+    {
+      "id": "1-5_msg_066",
+      "type": 1,
+      "content": "又不是什么大事",
+      "delay": 0,
+      "next": "1-5_msg_067"
+    },
+    {
+      "id": "1-5_msg_067",
+      "type": 1,
+      "content": "不会说",
+      "delay": 0,
+      "next": "1-5_msg_068"
+    },
+    {
+      "id": "1-5_msg_068",
+      "type": 1,
+      "content": "说了也没意义",
+      "delay": 0,
+      "next": "1-5_msg_069"
+    },
+    {
+      "id": "1-5_msg_069",
+      "type": 1,
+      "content": "她不会在意",
+      "delay": 0,
+      "next": "1-5_msg_070"
+    },
+    {
+      "id": "1-5_msg_070",
+      "type": 1,
+      "content": "一个新同事而已",
+      "delay": 0,
+      "next": "1-5_msg_071"
+    },
+    {
+      "id": "1-5_msg_071",
+      "type": 1,
+      "content": "说了反而",
+      "delay": 0,
+      "next": "1-5_msg_072"
+    },
+    {
+      "id": "1-5_msg_072",
+      "type": 1,
+      "content": "她会问很多问题",
+      "delay": 0,
+      "next": "1-5_msg_073"
+    },
+    {
+      "id": "1-5_msg_073",
+      "type": 1,
+      "content": "然后又没有什么",
+      "delay": 0,
+      "next": "1-5_msg_074"
+    },
+    {
+      "id": "1-5_msg_074",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_075"
+    },
+    {
+      "id": "1-5_msg_075",
+      "type": 1,
+      "content": "反而麻烦",
+      "delay": 0,
+      "next": "1-5_msg_076"
+    },
+    {
+      "id": "1-5_msg_076",
+      "type": 1,
+      "content": "以前会",
+      "delay": 0,
+      "next": "1-5_msg_077"
+    },
+    {
+      "id": "1-5_msg_077",
+      "type": 1,
+      "content": "以前每天回家",
+      "delay": 0,
+      "next": "1-5_msg_078"
+    },
+    {
+      "id": "1-5_msg_078",
+      "type": 1,
+      "content": "都会说今天发生了什么",
+      "delay": 0,
+      "next": "1-5_msg_079"
+    },
+    {
+      "id": "1-5_msg_079",
+      "type": 1,
+      "content": "后来",
+      "delay": 0,
+      "next": "1-5_msg_080"
+    },
+    {
+      "id": "1-5_msg_080",
+      "type": 1,
+      "content": "她不想听了",
+      "delay": 0,
+      "next": "1-5_msg_081"
+    },
+    {
+      "id": "1-5_msg_081",
+      "type": 1,
+      "content": "说\"我每天也很累，不想听这些\"",
+      "delay": 0,
+      "next": "1-5_msg_082"
+    },
+    {
+      "id": "1-5_msg_082",
+      "type": 1,
+      "content": "我就不说了",
+      "delay": 0,
+      "next": "1-5_msg_083"
+    },
+    {
+      "id": "1-5_msg_083",
+      "type": 1,
+      "content": "习惯了",
+      "delay": 0,
+      "next": "1-5_msg_084"
+    },
+    {
+      "id": "1-5_msg_084",
+      "type": 1,
+      "content": "小七",
+      "delay": 0,
+      "next": "1-5_msg_085"
+    },
+    {
+      "id": "1-5_msg_085",
+      "type": 1,
+      "content": "下班了",
+      "delay": 0,
+      "next": "1-5_msg_086"
+    },
+    {
+      "id": "1-5_msg_086",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_087"
+    },
+    {
+      "id": "1-5_msg_087",
+      "type": 1,
+      "content": "在回家路上",
+      "delay": 0,
+      "next": "1-5_msg_088"
+    },
+    {
+      "id": "1-5_msg_088",
+      "type": 1,
+      "content": "还行",
+      "delay": 0,
+      "next": "1-5_msg_089"
+    },
+    {
+      "id": "1-5_msg_089",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-5_msg_090"
+    },
+    {
+      "id": "1-5_msg_090",
+      "type": 1,
+      "content": "有点不想回家",
+      "delay": 0,
+      "next": "1-5_msg_091"
+    },
+    {
+      "id": "1-5_msg_091",
+      "type": 1,
+      "content": "不知道为什么",
+      "delay": 0,
+      "next": "1-5_msg_092"
+    },
+    {
+      "id": "1-5_msg_092",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_093"
+    },
+    {
+      "id": "1-5_msg_093",
+      "type": 1,
+      "content": "以前不会这样",
+      "delay": 0,
+      "next": "1-5_msg_094"
+    },
+    {
+      "id": "1-5_msg_094",
+      "type": 1,
+      "content": "不知道",
+      "delay": 0,
+      "next": "1-5_msg_095"
+    },
+    {
+      "id": "1-5_msg_095",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-5_msg_096"
+    },
+    {
+      "id": "1-5_msg_096",
+      "type": 1,
+      "content": "回家以后",
+      "delay": 0,
+      "next": "1-5_msg_097"
+    },
+    {
+      "id": "1-5_msg_097",
+      "type": 1,
+      "content": "不知道干什么",
+      "delay": 0,
+      "next": "1-5_msg_098"
+    },
+    {
+      "id": "1-5_msg_098",
+      "type": 1,
+      "content": "以前",
+      "delay": 0,
+      "next": "1-5_msg_099"
+    },
+    {
+      "id": "1-5_msg_099",
+      "type": 1,
+      "content": "还会跟老婆说说话",
+      "delay": 0,
+      "next": "1-5_msg_100"
+    },
+    {
+      "id": "1-5_msg_100",
+      "type": 1,
+      "content": "现在",
+      "delay": 0,
+      "next": "1-5_msg_101"
+    },
+    {
+      "id": "1-5_msg_101",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-5_msg_102"
+    },
+    {
+      "id": "1-5_msg_102",
+      "type": 1,
+      "content": "开门",
+      "delay": 0,
+      "next": "1-5_msg_103"
+    },
+    {
+      "id": "1-5_msg_103",
+      "type": 1,
+      "content": "换鞋",
+      "delay": 0,
+      "next": "1-5_msg_104"
+    },
+    {
+      "id": "1-5_msg_104",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-5_msg_105"
+    },
+    {
+      "id": "1-5_msg_105",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_106"
+    },
+    {
+      "id": "1-5_msg_106",
+      "type": 1,
+      "content": "各干各的",
+      "delay": 0,
+      "next": "1-5_msg_107"
+    },
+    {
+      "id": "1-5_msg_107",
+      "type": 1,
+      "content": "试过",
+      "delay": 0,
+      "next": "1-5_msg_108"
+    },
+    {
+      "id": "1-5_msg_108",
+      "type": 1,
+      "content": "主动找她说话",
+      "delay": 0,
+      "next": "1-5_msg_109"
+    },
+    {
+      "id": "1-5_msg_109",
+      "type": 1,
+      "content": "她会说\"嗯\"\"哦\"\"好的\"",
+      "delay": 0,
+      "next": "1-5_msg_110"
+    },
+    {
+      "id": "1-5_msg_110",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-5_msg_111"
+    },
+    {
+      "id": "1-5_msg_111",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_112"
+    },
+    {
+      "id": "1-5_msg_112",
+      "type": 1,
+      "content": "就没有然后了",
+      "delay": 0,
+      "next": "1-5_msg_113"
+    },
+    {
+      "id": "1-5_msg_113",
+      "type": 1,
+      "content": "很久了",
+      "delay": 0,
+      "next": "1-5_msg_114"
+    },
+    {
+      "id": "1-5_msg_114",
+      "type": 1,
+      "content": "具体多久",
+      "delay": 0,
+      "next": "1-5_msg_115"
+    },
+    {
+      "id": "1-5_msg_115",
+      "type": 1,
+      "content": "我也说不上来",
+      "delay": 0,
+      "next": "1-5_msg_116"
+    },
+    {
+      "id": "1-5_msg_116",
+      "type": 1,
+      "content": "可能是",
+      "delay": 0,
+      "next": "1-5_msg_117"
+    },
+    {
+      "id": "1-5_msg_117",
+      "type": 1,
+      "content": "糖糖出生以后吧",
+      "delay": 0,
+      "next": "1-5_msg_118"
+    },
+    {
+      "id": "1-5_msg_118",
+      "type": 1,
+      "content": "她把注意力都放在孩子身上",
+      "delay": 0,
+      "next": "1-5_msg_119"
+    },
+    {
+      "id": "1-5_msg_119",
+      "type": 1,
+      "content": "我",
+      "delay": 0,
+      "next": "1-5_msg_120"
+    },
+    {
+      "id": "1-5_msg_120",
+      "type": 1,
+      "content": "好像变成了",
+      "delay": 0,
+      "next": "1-5_msg_121"
+    },
+    {
+      "id": "1-5_msg_121",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_122"
+    },
+    {
+      "id": "1-5_msg_122",
+      "type": 1,
+      "content": "赚钱的工具",
+      "delay": 0,
+      "next": "1-5_msg_123"
+    },
+    {
+      "id": "1-5_msg_123",
+      "type": 1,
+      "content": "说过",
+      "delay": 0,
+      "next": "1-5_msg_124"
+    },
+    {
+      "id": "1-5_msg_124",
+      "type": 1,
+      "content": "她说我想太多了",
+      "delay": 0,
+      "next": "1-5_msg_125"
+    },
+    {
+      "id": "1-5_msg_125",
+      "type": 1,
+      "content": "说她已经很累了",
+      "delay": 0,
+      "next": "1-5_msg_126"
+    },
+    {
+      "id": "1-5_msg_126",
+      "type": 1,
+      "content": "让我多体谅她",
+      "delay": 0,
+      "next": "1-5_msg_127"
+    },
+    {
+      "id": "1-5_msg_127",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-5_msg_128"
+    },
+    {
+      "id": "1-5_msg_128",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-5_msg_129"
+    },
+    {
+      "id": "1-5_msg_129",
+      "type": 1,
+      "content": "就没有然后了",
+      "delay": 0,
+      "next": "1-5_msg_130"
+    },
+    {
+      "id": "1-5_msg_130",
+      "type": 1,
+      "content": "体谅",
+      "delay": 0,
+      "next": "1-5_msg_131"
+    },
+    {
+      "id": "1-5_msg_131",
+      "type": 1,
+      "content": "当然体谅",
+      "delay": 0,
+      "next": "1-5_msg_132"
+    },
+    {
+      "id": "1-5_msg_132",
+      "type": 1,
+      "content": "她带孩子很辛苦",
+      "delay": 0,
+      "next": "1-5_msg_133"
+    },
+    {
+      "id": "1-5_msg_133",
+      "type": 1,
+      "content": "我也没说她不对",
+      "delay": 0,
+      "next": "1-5_msg_134"
+    },
+    {
+      "id": "1-5_msg_134",
+      "type": 1,
+      "content": "只是",
+      "delay": 0,
+      "next": "1-5_msg_135"
+    },
+    {
+      "id": "1-5_msg_135",
+      "type": 1,
+      "content": "我也需要",
+      "delay": 0,
+      "next": "1-5_msg_136"
+    },
+    {
+      "id": "1-5_msg_136",
+      "type": 1,
+      "content": "被看见",
+      "delay": 0,
+      "next": "1-5_msg_137"
+    },
+    {
+      "id": "1-5_msg_137",
+      "type": 1,
+      "content": "被听见",
+      "delay": 0
+    }
+  ]
+}

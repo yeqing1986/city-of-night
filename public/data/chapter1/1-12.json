@@ -1,0 +1,250 @@
+{
+  "sceneId": "1-12",
+  "title": "傍晚的短信",
+  "nodes": [
+    {
+      "id": "1-12_msg_001",
+      "type": 1,
+      "content": "小七",
+      "delay": 0,
+      "next": "1-12_msg_002"
+    },
+    {
+      "id": "1-12_msg_002",
+      "type": 1,
+      "content": "刚才",
+      "delay": 0,
+      "next": "1-12_msg_003"
+    },
+    {
+      "id": "1-12_msg_003",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-12_msg_004"
+    },
+    {
+      "id": "1-12_msg_004",
+      "type": 1,
+      "content": "周颖发了条短信给我",
+      "delay": 0,
+      "next": "1-12_msg_005"
+    },
+    {
+      "id": "1-12_msg_005",
+      "type": 1,
+      "content": "公司有通讯录",
+      "delay": 0,
+      "next": "1-12_msg_006"
+    },
+    {
+      "id": "1-12_msg_006",
+      "type": 1,
+      "content": "她问我",
+      "delay": 0,
+      "next": "1-12_msg_007"
+    },
+    {
+      "id": "1-12_msg_007",
+      "type": 1,
+      "content": "\"明天有空吗，要不要一起去看个家具展\"",
+      "delay": 0,
+      "next": "1-12_msg_008"
+    },
+    {
+      "id": "1-12_msg_008",
+      "type": 1,
+      "content": "说",
+      "delay": 0,
+      "next": "1-12_msg_009"
+    },
+    {
+      "id": "1-12_msg_009",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-12_msg_010"
+    },
+    {
+      "id": "1-12_msg_010",
+      "type": 1,
+      "content": "\"听说挺好看的，同事一起逛逛\"",
+      "delay": 0,
+      "next": "1-12_msg_011"
+    },
+    {
+      "id": "1-12_msg_011",
+      "type": 1,
+      "content": "我还没回",
+      "delay": 0,
+      "next": "1-12_msg_012"
+    },
+    {
+      "id": "1-12_msg_012",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-12_msg_013"
+    },
+    {
+      "id": "1-12_msg_013",
+      "type": 1,
+      "content": "有点突然",
+      "delay": 0,
+      "next": "1-12_msg_014"
+    },
+    {
+      "id": "1-12_msg_014",
+      "type": 1,
+      "content": "也有点",
+      "delay": 0,
+      "next": "1-12_msg_015"
+    },
+    {
+      "id": "1-12_msg_015",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-12_msg_016"
+    },
+    {
+      "id": "1-12_msg_016",
+      "type": 1,
+      "content": "期待",
+      "delay": 0,
+      "next": "1-12_msg_017"
+    },
+    {
+      "id": "1-12_msg_017",
+      "type": 1,
+      "content": "期待",
+      "delay": 0,
+      "next": "1-12_msg_018"
+    },
+    {
+      "id": "1-12_msg_018",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-12_msg_019"
+    },
+    {
+      "id": "1-12_msg_019",
+      "type": 1,
+      "content": "有人约我",
+      "delay": 0,
+      "next": "1-12_msg_020"
+    },
+    {
+      "id": "1-12_msg_020",
+      "type": 1,
+      "content": "有人想到我",
+      "delay": 0,
+      "next": "1-12_msg_021"
+    },
+    {
+      "id": "1-12_msg_021",
+      "type": 1,
+      "content": "有人",
+      "delay": 0,
+      "next": "1-12_msg_022"
+    },
+    {
+      "id": "1-12_msg_022",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-12_msg_023"
+    },
+    {
+      "id": "1-12_msg_023",
+      "type": 1,
+      "content": "问我明天有空吗",
+      "delay": 0,
+      "next": "1-12_msg_024"
+    },
+    {
+      "id": "1-12_msg_024",
+      "type": 1,
+      "content": "不会",
+      "delay": 0,
+      "next": "1-12_msg_025"
+    },
+    {
+      "id": "1-12_msg_025",
+      "type": 1,
+      "content": "她不会问我",
+      "delay": 0,
+      "next": "1-12_msg_026"
+    },
+    {
+      "id": "1-12_msg_026",
+      "type": 1,
+      "content": "她会直接说",
+      "delay": 0,
+      "next": "1-12_msg_027"
+    },
+    {
+      "id": "1-12_msg_027",
+      "type": 1,
+      "content": "\"明天你要带孩子\"",
+      "delay": 0,
+      "next": "1-12_msg_028"
+    },
+    {
+      "id": "1-12_msg_028",
+      "type": 1,
+      "content": "或者",
+      "delay": 0,
+      "next": "1-12_msg_029"
+    },
+    {
+      "id": "1-12_msg_029",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-12_msg_030"
+    },
+    {
+      "id": "1-12_msg_030",
+      "type": 1,
+      "content": "\"明天你有空的话，去接一下糖糖\"",
+      "delay": 0,
+      "next": "1-12_msg_031"
+    },
+    {
+      "id": "1-12_msg_031",
+      "type": 1,
+      "content": "意味着",
+      "delay": 0,
+      "next": "1-12_msg_032"
+    },
+    {
+      "id": "1-12_msg_032",
+      "type": 1,
+      "content": "我被问了",
+      "delay": 0,
+      "next": "1-12_msg_033"
+    },
+    {
+      "id": "1-12_msg_033",
+      "type": 1,
+      "content": "不是被通知",
+      "delay": 0,
+      "next": "1-12_msg_034"
+    },
+    {
+      "id": "1-12_msg_034",
+      "type": 1,
+      "content": "是被问",
+      "delay": 0,
+      "next": "1-12_msg_035"
+    },
+    {
+      "id": "1-12_msg_035",
+      "type": 1,
+      "content": "可以选",
+      "delay": 0
+    }
+  ]
+}

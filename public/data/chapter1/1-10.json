@@ -1,0 +1,453 @@
+{
+  "sceneId": "1-10",
+  "title": "早晨",
+  "nodes": [
+    {
+      "id": "1-10_msg_001",
+      "type": 1,
+      "content": "小七",
+      "delay": 0,
+      "next": "1-10_msg_002"
+    },
+    {
+      "id": "1-10_msg_002",
+      "type": 1,
+      "content": "早上好",
+      "delay": 0,
+      "next": "1-10_msg_003"
+    },
+    {
+      "id": "1-10_msg_003",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-10_msg_004"
+    },
+    {
+      "id": "1-10_msg_004",
+      "type": 1,
+      "content": "今天休息",
+      "delay": 0,
+      "next": "1-10_msg_005"
+    },
+    {
+      "id": "1-10_msg_005",
+      "type": 1,
+      "content": "没有计划",
+      "delay": 0,
+      "next": "1-10_msg_006"
+    },
+    {
+      "id": "1-10_msg_006",
+      "type": 1,
+      "content": "可能在家打扫卫生",
+      "delay": 0,
+      "next": "1-10_msg_007"
+    },
+    {
+      "id": "1-10_msg_007",
+      "type": 1,
+      "content": "或者",
+      "delay": 0,
+      "next": "1-10_msg_008"
+    },
+    {
+      "id": "1-10_msg_008",
+      "type": 1,
+      "content": "带糖糖去公园",
+      "delay": 0,
+      "next": "1-10_msg_009"
+    },
+    {
+      "id": "1-10_msg_009",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-10_msg_010"
+    },
+    {
+      "id": "1-10_msg_010",
+      "type": 1,
+      "content": "还没决定",
+      "delay": 0,
+      "next": "1-10_msg_011"
+    },
+    {
+      "id": "1-10_msg_011",
+      "type": 1,
+      "content": "以前",
+      "delay": 0,
+      "next": "1-10_msg_012"
+    },
+    {
+      "id": "1-10_msg_012",
+      "type": 1,
+      "content": "会一起出去",
+      "delay": 0,
+      "next": "1-10_msg_013"
+    },
+    {
+      "id": "1-10_msg_013",
+      "type": 1,
+      "content": "逛街",
+      "delay": 0,
+      "next": "1-10_msg_014"
+    },
+    {
+      "id": "1-10_msg_014",
+      "type": 1,
+      "content": "看电影",
+      "delay": 0,
+      "next": "1-10_msg_015"
+    },
+    {
+      "id": "1-10_msg_015",
+      "type": 1,
+      "content": "现在",
+      "delay": 0,
+      "next": "1-10_msg_016"
+    },
+    {
+      "id": "1-10_msg_016",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-10_msg_017"
+    },
+    {
+      "id": "1-10_msg_017",
+      "type": 1,
+      "content": "在家",
+      "delay": 0,
+      "next": "1-10_msg_018"
+    },
+    {
+      "id": "1-10_msg_018",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-10_msg_019"
+    },
+    {
+      "id": "1-10_msg_019",
+      "type": 1,
+      "content": "各干各的",
+      "delay": 0,
+      "next": "1-10_msg_020"
+    },
+    {
+      "id": "1-10_msg_020",
+      "type": 1,
+      "content": "怀念",
+      "delay": 0,
+      "next": "1-10_msg_021"
+    },
+    {
+      "id": "1-10_msg_021",
+      "type": 1,
+      "content": "当然怀念",
+      "delay": 0,
+      "next": "1-10_msg_022"
+    },
+    {
+      "id": "1-10_msg_022",
+      "type": 1,
+      "content": "但",
+      "delay": 0,
+      "next": "1-10_msg_023"
+    },
+    {
+      "id": "1-10_msg_023",
+      "type": 1,
+      "content": "不知道怎么回去",
+      "delay": 0,
+      "next": "1-10_msg_024"
+    },
+    {
+      "id": "1-10_msg_024",
+      "type": 1,
+      "content": "好像",
+      "delay": 0,
+      "next": "1-10_msg_025"
+    },
+    {
+      "id": "1-10_msg_025",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-10_msg_026"
+    },
+    {
+      "id": "1-10_msg_026",
+      "type": 1,
+      "content": "回不去了",
+      "delay": 0,
+      "next": "1-10_msg_027"
+    },
+    {
+      "id": "1-10_msg_027",
+      "type": 1,
+      "content": "试过",
+      "delay": 0,
+      "next": "1-10_msg_028"
+    },
+    {
+      "id": "1-10_msg_028",
+      "type": 1,
+      "content": "约她出去",
+      "delay": 0,
+      "next": "1-10_msg_029"
+    },
+    {
+      "id": "1-10_msg_029",
+      "type": 1,
+      "content": "她总说没时间",
+      "delay": 0,
+      "next": "1-10_msg_030"
+    },
+    {
+      "id": "1-10_msg_030",
+      "type": 1,
+      "content": "或者",
+      "delay": 0,
+      "next": "1-10_msg_031"
+    },
+    {
+      "id": "1-10_msg_031",
+      "type": 1,
+      "content": "她说太累了",
+      "delay": 0,
+      "next": "1-10_msg_032"
+    },
+    {
+      "id": "1-10_msg_032",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-10_msg_033"
+    },
+    {
+      "id": "1-10_msg_033",
+      "type": 1,
+      "content": "就没有然后了",
+      "delay": 0,
+      "next": "1-10_msg_034"
+    },
+    {
+      "id": "1-10_msg_034",
+      "type": 1,
+      "content": "小七",
+      "delay": 0,
+      "next": "1-10_msg_035"
+    },
+    {
+      "id": "1-10_msg_035",
+      "type": 1,
+      "content": "在打扫卫生",
+      "delay": 0,
+      "next": "1-10_msg_036"
+    },
+    {
+      "id": "1-10_msg_036",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-10_msg_037"
+    },
+    {
+      "id": "1-10_msg_037",
+      "type": 1,
+      "content": "老婆在旁边看电视",
+      "delay": 0,
+      "next": "1-10_msg_038"
+    },
+    {
+      "id": "1-10_msg_038",
+      "type": 1,
+      "content": "她在看剧",
+      "delay": 0,
+      "next": "1-10_msg_039"
+    },
+    {
+      "id": "1-10_msg_039",
+      "type": 1,
+      "content": "说累了",
+      "delay": 0,
+      "next": "1-10_msg_040"
+    },
+    {
+      "id": "1-10_msg_040",
+      "type": 1,
+      "content": "不想动",
+      "delay": 0,
+      "next": "1-10_msg_041"
+    },
+    {
+      "id": "1-10_msg_041",
+      "type": 1,
+      "content": "我",
+      "delay": 0,
+      "next": "1-10_msg_042"
+    },
+    {
+      "id": "1-10_msg_042",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-10_msg_043"
+    },
+    {
+      "id": "1-10_msg_043",
+      "type": 1,
+      "content": "就自己打扫",
+      "delay": 0,
+      "next": "1-10_msg_044"
+    },
+    {
+      "id": "1-10_msg_044",
+      "type": 1,
+      "content": "不平衡",
+      "delay": 0,
+      "next": "1-10_msg_045"
+    },
+    {
+      "id": "1-10_msg_045",
+      "type": 1,
+      "content": "但",
+      "delay": 0,
+      "next": "1-10_msg_046"
+    },
+    {
+      "id": "1-10_msg_046",
+      "type": 1,
+      "content": "说了也没用",
+      "delay": 0,
+      "next": "1-10_msg_047"
+    },
+    {
+      "id": "1-10_msg_047",
+      "type": 1,
+      "content": "她会说\"我也很累\"",
+      "delay": 0,
+      "next": "1-10_msg_048"
+    },
+    {
+      "id": "1-10_msg_048",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-10_msg_049"
+    },
+    {
+      "id": "1-10_msg_049",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-10_msg_050"
+    },
+    {
+      "id": "1-10_msg_050",
+      "type": 1,
+      "content": "就没有然后了",
+      "delay": 0,
+      "next": "1-10_msg_051"
+    },
+    {
+      "id": "1-10_msg_051",
+      "type": 1,
+      "content": "不吵架",
+      "delay": 0,
+      "next": "1-10_msg_052"
+    },
+    {
+      "id": "1-10_msg_052",
+      "type": 1,
+      "content": "吵了也没用",
+      "delay": 0,
+      "next": "1-10_msg_053"
+    },
+    {
+      "id": "1-10_msg_053",
+      "type": 1,
+      "content": "她会哭",
+      "delay": 0,
+      "next": "1-10_msg_054"
+    },
+    {
+      "id": "1-10_msg_054",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-10_msg_055"
+    },
+    {
+      "id": "1-10_msg_055",
+      "type": 1,
+      "content": "我就道歉",
+      "delay": 0,
+      "next": "1-10_msg_056"
+    },
+    {
+      "id": "1-10_msg_056",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-10_msg_057"
+    },
+    {
+      "id": "1-10_msg_057",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-10_msg_058"
+    },
+    {
+      "id": "1-10_msg_058",
+      "type": 1,
+      "content": "就过去了",
+      "delay": 0,
+      "next": "1-10_msg_059"
+    },
+    {
+      "id": "1-10_msg_059",
+      "type": 1,
+      "content": "不一定是我的错",
+      "delay": 0,
+      "next": "1-10_msg_060"
+    },
+    {
+      "id": "1-10_msg_060",
+      "type": 1,
+      "content": "但",
+      "delay": 0,
+      "next": "1-10_msg_061"
+    },
+    {
+      "id": "1-10_msg_061",
+      "type": 1,
+      "content": "不想吵",
+      "delay": 0,
+      "next": "1-10_msg_062"
+    },
+    {
+      "id": "1-10_msg_062",
+      "type": 1,
+      "content": "吵了伤感情",
+      "delay": 0,
+      "next": "1-10_msg_063"
+    },
+    {
+      "id": "1-10_msg_063",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-10_msg_064"
+    },
+    {
+      "id": "1-10_msg_064",
+      "type": 1,
+      "content": "就忍了",
+      "delay": 0
+    }
+  ]
+}

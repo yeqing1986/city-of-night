@@ -1,0 +1,467 @@
+{
+  "sceneId": "1-15",
+  "title": "地铁站的偶遇",
+  "nodes": [
+    {
+      "id": "1-15_msg_001",
+      "type": 1,
+      "content": "小七",
+      "delay": 0,
+      "next": "1-15_msg_002"
+    },
+    {
+      "id": "1-15_msg_002",
+      "type": 1,
+      "content": "刚才在地铁站",
+      "delay": 0,
+      "next": "1-15_msg_003"
+    },
+    {
+      "id": "1-15_msg_003",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-15_msg_004"
+    },
+    {
+      "id": "1-15_msg_004",
+      "type": 1,
+      "content": "遇到周颖了",
+      "delay": 0,
+      "next": "1-15_msg_005"
+    },
+    {
+      "id": "1-15_msg_005",
+      "type": 1,
+      "content": "挺巧的",
+      "delay": 0,
+      "next": "1-15_msg_006"
+    },
+    {
+      "id": "1-15_msg_006",
+      "type": 1,
+      "content": "她",
+      "delay": 0,
+      "next": "1-15_msg_007"
+    },
+    {
+      "id": "1-15_msg_007",
+      "type": 1,
+      "content": "穿了一件白色的连衣裙",
+      "delay": 0,
+      "next": "1-15_msg_008"
+    },
+    {
+      "id": "1-15_msg_008",
+      "type": 1,
+      "content": "很好看",
+      "delay": 0,
+      "next": "1-15_msg_009"
+    },
+    {
+      "id": "1-15_msg_009",
+      "type": 1,
+      "content": "她看到我",
+      "delay": 0,
+      "next": "1-15_msg_010"
+    },
+    {
+      "id": "1-15_msg_010",
+      "type": 1,
+      "content": "笑了",
+      "delay": 0,
+      "next": "1-15_msg_011"
+    },
+    {
+      "id": "1-15_msg_011",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-15_msg_012"
+    },
+    {
+      "id": "1-15_msg_012",
+      "type": 1,
+      "content": "说\"早啊，邻居\"",
+      "delay": 0,
+      "next": "1-15_msg_013"
+    },
+    {
+      "id": "1-15_msg_013",
+      "type": 1,
+      "content": "感觉",
+      "delay": 0,
+      "next": "1-15_msg_014"
+    },
+    {
+      "id": "1-15_msg_014",
+      "type": 1,
+      "content": "挺好的",
+      "delay": 0,
+      "next": "1-15_msg_015"
+    },
+    {
+      "id": "1-15_msg_015",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-15_msg_016"
+    },
+    {
+      "id": "1-15_msg_016",
+      "type": 1,
+      "content": "心情突然变好了",
+      "delay": 0,
+      "next": "1-15_msg_017"
+    },
+    {
+      "id": "1-15_msg_017",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-15_msg_018"
+    },
+    {
+      "id": "1-15_msg_018",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-15_msg_019"
+    },
+    {
+      "id": "1-15_msg_019",
+      "type": 1,
+      "content": "我们一起等地铁",
+      "delay": 0,
+      "next": "1-15_msg_020"
+    },
+    {
+      "id": "1-15_msg_020",
+      "type": 1,
+      "content": "聊了",
+      "delay": 0,
+      "next": "1-15_msg_021"
+    },
+    {
+      "id": "1-15_msg_021",
+      "type": 1,
+      "content": "她说",
+      "delay": 0,
+      "next": "1-15_msg_022"
+    },
+    {
+      "id": "1-15_msg_022",
+      "type": 1,
+      "content": "\"昨天谢谢你回我短信\"",
+      "delay": 0,
+      "next": "1-15_msg_023"
+    },
+    {
+      "id": "1-15_msg_023",
+      "type": 1,
+      "content": "我说",
+      "delay": 0,
+      "next": "1-15_msg_024"
+    },
+    {
+      "id": "1-15_msg_024",
+      "type": 1,
+      "content": "\"不客气\"",
+      "delay": 0,
+      "next": "1-15_msg_025"
+    },
+    {
+      "id": "1-15_msg_025",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-15_msg_026"
+    },
+    {
+      "id": "1-15_msg_026",
+      "type": 1,
+      "content": "地铁来了",
+      "delay": 0,
+      "next": "1-15_msg_027"
+    },
+    {
+      "id": "1-15_msg_027",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-15_msg_028"
+    },
+    {
+      "id": "1-15_msg_028",
+      "type": 1,
+      "content": "我们就分开了",
+      "delay": 0,
+      "next": "1-15_msg_029"
+    },
+    {
+      "id": "1-15_msg_029",
+      "type": 1,
+      "content": "有点",
+      "delay": 0,
+      "next": "1-15_msg_030"
+    },
+    {
+      "id": "1-15_msg_030",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-15_msg_031"
+    },
+    {
+      "id": "1-15_msg_031",
+      "type": 1,
+      "content": "想多聊几句",
+      "delay": 0,
+      "next": "1-15_msg_032"
+    },
+    {
+      "id": "1-15_msg_032",
+      "type": 1,
+      "content": "但",
+      "delay": 0,
+      "next": "1-15_msg_033"
+    },
+    {
+      "id": "1-15_msg_033",
+      "type": 1,
+      "content": "地铁来了",
+      "delay": 0,
+      "next": "1-15_msg_034"
+    },
+    {
+      "id": "1-15_msg_034",
+      "type": 1,
+      "content": "就",
+      "delay": 0,
+      "next": "1-15_msg_035"
+    },
+    {
+      "id": "1-15_msg_035",
+      "type": 1,
+      "content": "算了",
+      "delay": 0,
+      "next": "1-15_msg_036"
+    },
+    {
+      "id": "1-15_msg_036",
+      "type": 1,
+      "content": "小七",
+      "delay": 0,
+      "next": "1-15_msg_037"
+    },
+    {
+      "id": "1-15_msg_037",
+      "type": 1,
+      "content": "上午工作累了",
+      "delay": 0,
+      "next": "1-15_msg_038"
+    },
+    {
+      "id": "1-15_msg_038",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-15_msg_039"
+    },
+    {
+      "id": "1-15_msg_039",
+      "type": 1,
+      "content": "休息一下",
+      "delay": 0,
+      "next": "1-15_msg_040"
+    },
+    {
+      "id": "1-15_msg_040",
+      "type": 1,
+      "content": "还行",
+      "delay": 0,
+      "next": "1-15_msg_041"
+    },
+    {
+      "id": "1-15_msg_041",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-15_msg_042"
+    },
+    {
+      "id": "1-15_msg_042",
+      "type": 1,
+      "content": "有点走神",
+      "delay": 0,
+      "next": "1-15_msg_043"
+    },
+    {
+      "id": "1-15_msg_043",
+      "type": 1,
+      "content": "不知道为什么",
+      "delay": 0,
+      "next": "1-15_msg_044"
+    },
+    {
+      "id": "1-15_msg_044",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-15_msg_045"
+    },
+    {
+      "id": "1-15_msg_045",
+      "type": 1,
+      "content": "会想到周颖",
+      "delay": 0,
+      "next": "1-15_msg_046"
+    },
+    {
+      "id": "1-15_msg_046",
+      "type": 1,
+      "content": "想到",
+      "delay": 0,
+      "next": "1-15_msg_047"
+    },
+    {
+      "id": "1-15_msg_047",
+      "type": 1,
+      "content": "她笑的样子",
+      "delay": 0,
+      "next": "1-15_msg_048"
+    },
+    {
+      "id": "1-15_msg_048",
+      "type": 1,
+      "content": "她说话的声音",
+      "delay": 0,
+      "next": "1-15_msg_049"
+    },
+    {
+      "id": "1-15_msg_049",
+      "type": 1,
+      "content": "她",
+      "delay": 0,
+      "next": "1-15_msg_050"
+    },
+    {
+      "id": "1-15_msg_050",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-15_msg_051"
+    },
+    {
+      "id": "1-15_msg_051",
+      "type": 1,
+      "content": "穿白裙子的样子",
+      "delay": 0,
+      "next": "1-15_msg_052"
+    },
+    {
+      "id": "1-15_msg_052",
+      "type": 1,
+      "content": "不知道",
+      "delay": 0,
+      "next": "1-15_msg_053"
+    },
+    {
+      "id": "1-15_msg_053",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-15_msg_054"
+    },
+    {
+      "id": "1-15_msg_054",
+      "type": 1,
+      "content": "控制不住",
+      "delay": 0,
+      "next": "1-15_msg_055"
+    },
+    {
+      "id": "1-15_msg_055",
+      "type": 1,
+      "content": "会想到她",
+      "delay": 0,
+      "next": "1-15_msg_056"
+    },
+    {
+      "id": "1-15_msg_056",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-15_msg_057"
+    },
+    {
+      "id": "1-15_msg_057",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-15_msg_058"
+    },
+    {
+      "id": "1-15_msg_058",
+      "type": 1,
+      "content": "又有罪恶感",
+      "delay": 0,
+      "next": "1-15_msg_059"
+    },
+    {
+      "id": "1-15_msg_059",
+      "type": 1,
+      "content": "习惯了",
+      "delay": 0,
+      "next": "1-15_msg_060"
+    },
+    {
+      "id": "1-15_msg_060",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-15_msg_061"
+    },
+    {
+      "id": "1-15_msg_061",
+      "type": 1,
+      "content": "循环",
+      "delay": 0,
+      "next": "1-15_msg_062"
+    },
+    {
+      "id": "1-15_msg_062",
+      "type": 1,
+      "content": "想她",
+      "delay": 0,
+      "next": "1-15_msg_063"
+    },
+    {
+      "id": "1-15_msg_063",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-15_msg_064"
+    },
+    {
+      "id": "1-15_msg_064",
+      "type": 1,
+      "content": "罪恶感",
+      "delay": 0,
+      "next": "1-15_msg_065"
+    },
+    {
+      "id": "1-15_msg_065",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-15_msg_066"
+    },
+    {
+      "id": "1-15_msg_066",
+      "type": 1,
+      "content": "又想她",
+      "delay": 0
+    }
+  ]
+}

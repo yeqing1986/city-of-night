@@ -1,0 +1,208 @@
+{
+  "sceneId": "1-28",
+  "title": "傍晚的散步",
+  "nodes": [
+    {
+      "id": "1-28_msg_001",
+      "type": 1,
+      "content": "小七",
+      "delay": 0,
+      "next": "1-28_msg_002"
+    },
+    {
+      "id": "1-28_msg_002",
+      "type": 1,
+      "content": "老婆让我去散步",
+      "delay": 0,
+      "next": "1-28_msg_003"
+    },
+    {
+      "id": "1-28_msg_003",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-28_msg_004"
+    },
+    {
+      "id": "1-28_msg_004",
+      "type": 1,
+      "content": "我拒绝了",
+      "delay": 0,
+      "next": "1-28_msg_005"
+    },
+    {
+      "id": "1-28_msg_005",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-28_msg_006"
+    },
+    {
+      "id": "1-28_msg_006",
+      "type": 1,
+      "content": "不想去",
+      "delay": 0,
+      "next": "1-28_msg_007"
+    },
+    {
+      "id": "1-28_msg_007",
+      "type": 1,
+      "content": "她",
+      "delay": 0,
+      "next": "1-28_msg_008"
+    },
+    {
+      "id": "1-28_msg_008",
+      "type": 1,
+      "content": "有点生气",
+      "delay": 0,
+      "next": "1-28_msg_009"
+    },
+    {
+      "id": "1-28_msg_009",
+      "type": 1,
+      "content": "然后",
+      "delay": 0,
+      "next": "1-28_msg_010"
+    },
+    {
+      "id": "1-28_msg_010",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-28_msg_011"
+    },
+    {
+      "id": "1-28_msg_011",
+      "type": 1,
+      "content": "就没有然后了",
+      "delay": 0,
+      "next": "1-28_msg_012"
+    },
+    {
+      "id": "1-28_msg_012",
+      "type": 1,
+      "content": "不知道",
+      "delay": 0,
+      "next": "1-28_msg_013"
+    },
+    {
+      "id": "1-28_msg_013",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-28_msg_014"
+    },
+    {
+      "id": "1-28_msg_014",
+      "type": 1,
+      "content": "不想跟她",
+      "delay": 0,
+      "next": "1-28_msg_015"
+    },
+    {
+      "id": "1-28_msg_015",
+      "type": 1,
+      "content": "一起散步",
+      "delay": 0,
+      "next": "1-28_msg_016"
+    },
+    {
+      "id": "1-28_msg_016",
+      "type": 1,
+      "content": "想",
+      "delay": 0,
+      "next": "1-28_msg_017"
+    },
+    {
+      "id": "1-28_msg_017",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-28_msg_018"
+    },
+    {
+      "id": "1-28_msg_018",
+      "type": 1,
+      "content": "一个人待着",
+      "delay": 0,
+      "next": "1-28_msg_019"
+    },
+    {
+      "id": "1-28_msg_019",
+      "type": 1,
+      "content": "在想",
+      "delay": 0,
+      "next": "1-28_msg_020"
+    },
+    {
+      "id": "1-28_msg_020",
+      "type": 1,
+      "content": "昨天晚上的事",
+      "delay": 0,
+      "next": "1-28_msg_021"
+    },
+    {
+      "id": "1-28_msg_021",
+      "type": 1,
+      "content": "就是",
+      "delay": 0,
+      "next": "1-28_msg_022"
+    },
+    {
+      "id": "1-28_msg_022",
+      "type": 1,
+      "content": "控制不住",
+      "delay": 0,
+      "next": "1-28_msg_023"
+    },
+    {
+      "id": "1-28_msg_023",
+      "type": 1,
+      "content": "（等待用户输入）",
+      "delay": 0,
+      "next": "1-28_msg_024"
+    },
+    {
+      "id": "1-28_msg_024",
+      "type": 1,
+      "content": "会想她",
+      "delay": 0,
+      "next": "1-28_msg_025"
+    },
+    {
+      "id": "1-28_msg_025",
+      "type": 1,
+      "content": "想她",
+      "delay": 0,
+      "next": "1-28_msg_026"
+    },
+    {
+      "id": "1-28_msg_026",
+      "type": 1,
+      "content": "笑的样子",
+      "delay": 0,
+      "next": "1-28_msg_027"
+    },
+    {
+      "id": "1-28_msg_027",
+      "type": 1,
+      "content": "她说话的声音",
+      "delay": 0,
+      "next": "1-28_msg_028"
+    },
+    {
+      "id": "1-28_msg_028",
+      "type": 1,
+      "content": "她",
+      "delay": 0,
+      "next": "1-28_msg_029"
+    },
+    {
+      "id": "1-28_msg_029",
+      "type": 1,
+      "content": "穿白裙子的样子",
+      "delay": 0
+    }
+  ]
+}

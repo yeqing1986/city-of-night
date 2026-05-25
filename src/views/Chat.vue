@@ -46,42 +46,42 @@
           <div class="day-divider"><span>{{ msg.content }}</span></div>
         </div>
 
-        <!-- AI 消息 -->
-        <div v-else-if="msg.role === 'assistant'" class="msg-row ai">
+        <!-- 叶晓阳的消息（左侧） -->
+        <div v-if="msg.role === 'user'" class="msg-row user">
           <div class="avatar-wrap">
-            <img :src="aiAvatar" alt="" class="avatar-img" />
+            <img :src="characterAvatar" alt="" class="avatar-img" />
           </div>
+          <div class="bubble user-bubble">
+            <span class="triangle user-tri"></span>
+            <div class="bubble-text">{{ msg.content }}</div>
+          </div>
+        </div>
+
+        <!-- AI 消息（右侧） -->
+        <div v-else-if="msg.role === 'assistant'" class="msg-row ai">
           <div class="bubble ai-bubble">
-            <span class="triangle"></span>
+            <span class="triangle ai-tri"></span>
             <div class="bubble-text" v-html="msg.content.replace(/\n/g, '<br/>')"></div>
             <div v-if="msg.keywords?.length" class="bubble-keywords">
               <span v-for="kw in msg.keywords" :key="kw" class="kw-tag">#{{ kw }}</span>
             </div>
           </div>
-        </div>
-
-        <!-- 玩家消息 -->
-        <div v-else class="msg-row user">
-          <div class="bubble user-bubble">
-            <span class="triangle"></span>
-            <div class="bubble-text">{{ msg.content }}</div>
-          </div>
           <div class="avatar-wrap">
-            <img :src="characterAvatar" alt="" class="avatar-img" />
+            <img :src="aiAvatar" alt="" class="avatar-img" />
           </div>
         </div>
       </template>
 
       <!-- 正在输入 -->
       <div v-if="isTyping" class="msg-row ai typing-row">
-        <div class="avatar-wrap">
-          <img :src="aiAvatar" alt="" class="avatar-img" />
-        </div>
         <div class="bubble ai-bubble typing-bubble">
-          <span class="triangle"></span>
+          <span class="triangle ai-tri"></span>
           <div class="typing-dots">
             <i></i><i></i><i></i>
           </div>
+        </div>
+        <div class="avatar-wrap">
+          <img :src="aiAvatar" alt="" class="avatar-img" />
         </div>
       </div>
 
@@ -284,12 +284,15 @@ onMounted(() => {
 })
 
 // === 剧情加载 ===
-async function loadChapter() {
+// restoreMode: true 时只加载数据不添加消息，由 restoreMessages() 接管消息显示
+async function loadChapter(restoreMode = false) {
   try {
     const res = await fetch('/data/chapter1_nodes.json')
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = await res.json()
     DialogueEngine.loadChapter(data)
+
+    if (restoreMode) return // 恢复模式下不添加消息，由 restoreMessages() 接管
 
     // 从第一个节点开始播放
     const firstNode = DialogueEngine.getCurrentNode()
@@ -308,51 +311,65 @@ async function loadChapter() {
   }
 }
 
-// 根据消息长度计算等待时间（DLine的WaitTime思路）
+// 根据消息长度计算等待时间（参考DLine的WaitTime：更长的等待更真实）
 function calcWaitTime(content) {
-  if (!content) return 800
-  const base = Math.min(content.length * 20, 3000) // 每字20ms，上限3秒
-  return base + 400 + Math.random() * 400
+  if (!content) return 1500
+  // 每字40ms，上限5秒，最少1.5秒
+  const base = Math.max(1500, Math.min(content.length * 40, 5000))
+  return base + 400 + Math.random() * 600
 }
 
 // 重建消息历史（带打字等待效果）
+// 重建消息历史（带打字等待效果）
 async function restoreMessages() {
-  // 先重新加载章节数据（loadGame只恢复了currentNode）
-  await loadChapter()
+  // 重新加载章节数据（不添加消息，由本函数接管）
+  await loadChapter(true)
   
   const history = DialogueEngine.history
+  
   if (!history.length) {
-    showChoices()
+    // 无历史：从第一个节点开始
+    const firstNode = DialogueEngine.getCurrentNode()
+    if (firstNode?.content) {
+      addMessage(firstNode.role || 'assistant', firstNode.content, { keywords: firstNode.keywords || [] })
+    }
+    autoPlay()
     return
   }
 
-  // 从头重建消息历史，模拟真实打字效果
+  // === 从头重建消息历史 ===
+  // 显示第一条AI消息
+  const firstNode = DialogueEngine.getCurrentNode()
+  if (firstNode?.content) {
+    isTyping.value = true
+    await new Promise(r => setTimeout(r, 600 + Math.random() * 400))
+    isTyping.value = false
+    addMessage(firstNode.role || 'assistant', firstNode.content, { keywords: firstNode.keywords || [] })
+    await new Promise(r => setTimeout(r, calcWaitTime(firstNode.content)))
+  }
+
+  // 逐条重建历史（每条：AI等待 → AI消息 → 阅读时间 → 玩家消息 → 短暂停顿）
   for (const h of history) {
-    // 等待（模拟对方正在输入）
     isTyping.value = true
     await new Promise(r => setTimeout(r, 600 + Math.random() * 400))
     isTyping.value = false
     
-    // 显示AI消息（如果存在）
     const node = DialogueEngine.currentChapter?.nodes[h.nodeId]
     if (node?.content) {
       addMessage(node.role || 'assistant', node.content, { keywords: node.keywords || [] })
-      // 消息显示后等待阅读时间
       await new Promise(r => setTimeout(r, calcWaitTime(node.content)))
     }
     
-    // 显示玩家选择
     addMessage('user', h.choiceText)
-    // 玩家消息后短暂等待再继续
     await new Promise(r => setTimeout(r, 300))
     
-    // 恢复到最后节点
     DialogueEngine.currentNode = h.nodeId
   }
 
-  // 恢复到最后节点并显示选项
+  // 定位到当前节点并显示选项
   DialogueEngine.currentNode = history[history.length - 1]?.nodeId
   const currentNode = DialogueEngine.getCurrentNode()
+  
   if (currentNode?.choices?.length) {
     showChoices()
   } else {
@@ -668,7 +685,12 @@ function toggleDarkMode() {
   margin-bottom: 16px;
   animation: msgIn 0.3s ease;
 }
+/* 叶晓阳在左侧 */
 .msg-row.user {
+  flex-direction: row;
+}
+/* AI在右侧 */
+.msg-row.ai {
   flex-direction: row-reverse;
 }
 
@@ -732,13 +754,15 @@ function toggleDarkMode() {
   width: 0;
   height: 0;
 }
-.ai-bubble .triangle {
+/* AI气泡（右侧）：三角形在左侧，指向左边 */
+.ai-bubble .ai-tri {
   left: -6px;
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
   border-right: 6px solid var(--bg-message-assistant);
 }
-.user-bubble .triangle {
+/* 叶晓阳气泡（左侧）：三角形在右侧，指向右边 */
+.user-bubble .user-tri {
   right: -6px;
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;

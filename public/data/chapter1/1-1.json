@@ -1,640 +1,697 @@
 {
   "sceneId": "1-1",
   "title": "深夜下载",
+  "time": "23:15",
   "nodes": [
-     {
+    {
       "id": "1-1-000",
       "type": 6,
-      "content": "📱 下载完成",
+      "content": "📱 应用商店 - 热门推荐",
       "delay": 2000,
       "next": "1-1-001"
     },
- {
+    {
       "id": "1-1-001",
+      "type": 6,
+      "content": "深夜树洞 · 你的AI倾听者\n免费 | 评价 4.8★ | 1.2万条评论\n\n「有人愿意听你说话」\n「在这里，没有人会评判你」",
+      "delay": 3000,
+      "next": "1-1-002"
+    },
+    {
+      "id": "1-1-002",
+      "type": 6,
+      "content": "📱 下载完成",
+      "delay": 2000,
+      "next": "1-1-003"
+    },
+    {
+      "id": "1-1-003",
       "type": 6,
       "content": "📱 深夜树洞 - 加载成功",
       "delay": 2000,
-      "next": "1-1_msg_001"
+      "next": "1-1-004"
     },
-{
-      "id": "1-1_msg_001",
+    {
+      "id": "1-1-004",
       "type": 6,
-      "content": "深夜树洞 · 你的AI倾听者",
+      "content": "欢迎来到深夜树洞",
+      "delay": 1500,
+      "next": "1-1-005"
+    },
+    {
+      "id": "1-1-005",
+      "type": 6,
+      "content": "我是你的AI倾听者\n我没有名字，你可以给我取一个",
       "delay": 2000,
-      "next": "1-1_msg_002"
+      "next": "1-1-006"
     },
     {
-      "id": "1-1_msg_002",
+      "id": "1-1-006",
       "type": 6,
-      "content": "我是你的AI倾听者\n· 倾诉心事\n· 记录心情\n· 寻找陪伴\n我会一直在这里等你",
-      "delay":2000,
-      "next": "1-1_msg_003"
+      "content": "在这里，你可以：\n· 倾诉心事\n· 记录心情\n· 寻找陪伴",
+      "delay": 2000,
+      "next": "1-1-007"
     },
     {
-      "id": "1-1_msg_003",
+      "id": "1-1-007",
+      "type": 6,
+      "content": "我会一直在这里等你",
+      "delay": 1500,
+      "next": "1-1-008"
+    },
+    {
+      "id": "1-1-008",
       "type": 2,
       "content": "愿意跟我说说今天发生了什么吗？",
-      "delay": 2000,
-      "next": "1-1_msg_004"
-    },
-    {
-      "id": "1-1_msg_004",
-      "type": 1,
-      "content": "你好",
-      "delay": 3000,
-      "next": "1-1_msg_005"
-    },
-    {
-      "id": "1-1_msg_004",
-      "type": 2,
       "choices": [
         {
-          "text": "还没睡",
-          "next": "msg_003",
-          "nextScene": "scene_001",
-          "effects": { "trust": 5 }
+          "text": "你好，我是你的AI倾听者。睡不着——有什么心事吗？",
+          "next": "1-1-100",
+          "effects": {
+            "suspicion": -2
+          }
+        },
+        {
+          "text": "深夜睡不着很正常。要不要先自我介绍一下？",
+          "next": "1-1-100",
+          "effects": {
+            "suspicion": -1
+          }
+        },
+        {
+          "text": "打扰什么，你想说什么就说什么。",
+          "next": "1-1-100",
+          "effects": {
+            "suspicion": -3
+          }
         }
       ]
     },
     {
-      "id": "1-1_msg_005",
+      "id": "1-1-100",
+      "type": 1,
+      "content": "你好",
+      "delay": 3000,
+      "next": "1-1-101"
+    },
+    {
+      "id": "1-1-101",
       "type": 1,
       "content": "打扰了",
-      "delay": 3000,
-      "next": "1-1_msg_006"
+      "delay": 1500,
+      "next": "1-1-102"
     },
     {
-      "id": "1-1_msg_006",
+      "id": "1-1-102",
       "type": 1,
       "content": "其实我不知道为什么要下载这个",
-      "delay": 3500,
-      "next": "1-1_msg_007"
+      "delay": 2500,
+      "next": "1-1-103"
     },
     {
-      "id": "1-1_msg_007",
+      "id": "1-1-103",
       "type": 1,
       "content": "就是睡不着",
       "delay": 2000,
-      "next": "1-1_msg_008"
+      "next": "1-1-104"
     },
     {
-      "id": "1-1_msg_008",
-      "type": 1,
-      "content": "[1] 你好，我是你的AI倾听者。睡不着——有什么心事吗？",
-      "delay": 3000,
-      "next": "1-1_msg_009"
-    },
-    {
-      "id": "1-1_msg_009",
-      "type": 1,
-      "content": "想找人说说话\n共谋值：20 | 道德值：60 | 怀疑值：10",
-      "delay": 4000,
-      "next": "1-1_msg_010"
-    },
-    {
-      "id": "1-1_msg_010",
-      "type": 1,
-      "content": "你叫什么名字？",
-      "delay": 0,
-      "next": "1-1_msg_012"
-    },
-    {
-      "id": "1-1_msg_012",
-      "type": 1,
-      "content": "我该怎么称呼你？",
-      "delay": 0,
-      "next": "1-1_msg_013"
-    },
-    {
-      "id": "1-1_msg_013",
-      "type": 1,
-      "content": "叫你小七怎么样",
-      "delay": 0,
-      "next": "1-1_msg_014"
-    },
-    {
-      "id": "1-1_msg_014",
-      "type": 1,
-      "content": "你是我第七个下载的APP",
-      "delay": 0,
-      "next": "1-1_msg_015"
-    },
-    {
-      "id": "1-1_msg_015",
-      "type": 1,
-      "content": "但第一个我愿意跟它说话",
-      "delay": 0,
-      "next": "1-1_msg_016"
-    },
-    {
-      "id": "1-1_msg_016",
-      "type": 1,
-      "content": "（等待用户输入）",
-      "delay": 0,
-      "next": "1-1_msg_017"
-    },
-    {
-      "id": "1-1_msg_017",
-      "type": 1,
-      "content": "小七，你觉得怎么样？",
-      "delay": 0,
-      "next": "1-1_msg_018"
-    },
-    {
-      "id": "1-1_msg_018",
-      "type": 1,
-      "content": "那就说定了",
-      "delay": 0,
-      "next": "1-1_msg_019"
-    },
-    {
-      "id": "1-1_msg_019",
-      "type": 1,
-      "content": "小七",
-      "delay": 0,
-      "next": "1-1_msg_020"
-    },
-    {
-      "id": "1-1_msg_020",
-      "type": 1,
-      "content": "你好",
-      "delay": 0,
-      "next": "1-1_msg_021"
-    },
-    {
-      "id": "1-1_msg_021",
-      "type": 1,
-      "content": "我叫叶晓阳",
-      "delay": 0,
-      "next": "1-1_msg_022"
-    },
-    {
-      "id": "1-1_msg_022",
-      "type": 1,
-      "content": "今年三十二岁",
-      "delay": 0,
-      "next": "1-1_msg_023"
-    },
-    {
-      "id": "1-1_msg_023",
-      "type": 1,
-      "content": "在H城做销售",
-      "delay": 0,
-      "next": "1-1_msg_024"
-    },
-    {
-      "id": "1-1_msg_024",
-      "type": 1,
-      "content": "结婚了",
-      "delay": 0,
-      "next": "1-1_msg_025"
-    },
-    {
-      "id": "1-1_msg_025",
-      "type": 1,
-      "content": "有个女儿，三岁",
-      "delay": 0,
-      "next": "1-1_msg_026"
-    },
-    {
-      "id": "1-1_msg_026",
-      "type": 1,
-      "content": "叫糖糖",
-      "delay": 0,
-      "next": "1-1_msg_027"
-    },
-    {
-      "id": "1-1_msg_027",
-      "type": 1,
-      "content": "不是什么心事",
-      "delay": 0,
-      "next": "1-1_msg_028"
-    },
-    {
-      "id": "1-1_msg_028",
-      "type": 1,
-      "content": "（等待用户输入）",
-      "delay": 0,
-      "next": "1-1_msg_029"
-    },
-    {
-      "id": "1-1_msg_029",
-      "type": 1,
-      "content": "就是最近有点累",
-      "delay": 0,
-      "next": "1-1_msg_030"
-    },
-    {
-      "id": "1-1_msg_030",
-      "type": 1,
-      "content": "不是工作的事",
-      "delay": 0,
-      "next": "1-1_msg_031"
-    },
-    {
-      "id": "1-1_msg_031",
-      "type": 1,
-      "content": "工作还行",
-      "delay": 0,
-      "next": "1-1_msg_032"
-    },
-    {
-      "id": "1-1_msg_032",
-      "type": 1,
-      "content": "最近被领导表扬了",
-      "delay": 0,
-      "next": "1-1_msg_033"
-    },
-    {
-      "id": "1-1_msg_033",
-      "type": 1,
-      "content": "说下季度可能升职",
-      "delay": 0,
-      "next": "1-1_msg_034"
-    },
-    {
-      "id": "1-1_msg_034",
-      "type": 1,
-      "content": "但就是……",
-      "delay": 0,
-      "next": "1-1_msg_035"
-    },
-    {
-      "id": "1-1_msg_035",
-      "type": 1,
-      "content": "怎么说",
-      "delay": 0,
-      "next": "1-1_msg_036"
-    },
-    {
-      "id": "1-1_msg_036",
-      "type": 1,
-      "content": "回家的时候",
-      "delay": 0,
-      "next": "1-1_msg_037"
-    },
-    {
-      "id": "1-1_msg_037",
-      "type": 1,
-      "content": "觉得累",
-      "delay": 0,
-      "next": "1-1_msg_038"
-    },
-    {
-      "id": "1-1_msg_038",
-      "type": 1,
-      "content": "不是身体的累",
-      "delay": 0,
-      "next": "1-1_msg_039"
-    },
-    {
-      "id": "1-1_msg_039",
-      "type": 1,
-      "content": "（等待用户输入）",
-      "delay": 0,
-      "next": "1-1_msg_040"
-    },
-    {
-      "id": "1-1_msg_040",
-      "type": 1,
-      "content": "是心累",
-      "delay": 0,
-      "next": "1-1_msg_041"
-    },
-    {
-      "id": "1-1_msg_041",
-      "type": 1,
-      "content": "我老婆",
-      "delay": 0,
-      "next": "1-1_msg_042"
-    },
-    {
-      "id": "1-1_msg_042",
-      "type": 1,
-      "content": "她挺好的",
-      "delay": 0,
-      "next": "1-1_msg_043"
-    },
-    {
-      "id": "1-1_msg_043",
-      "type": 1,
-      "content": "就是有点……",
-      "delay": 0,
-      "next": "1-1_msg_044"
-    },
-    {
-      "id": "1-1_msg_044",
-      "type": 1,
-      "content": "不知道怎么形容",
-      "delay": 0,
-      "next": "1-1_msg_045"
-    },
-    {
-      "id": "1-1_msg_045",
-      "type": 1,
-      "content": "她每天都很忙",
-      "delay": 0,
-      "next": "1-1_msg_046"
-    },
-    {
-      "id": "1-1_msg_046",
-      "type": 1,
-      "content": "忙着照顾糖糖",
-      "delay": 0,
-      "next": "1-1_msg_047"
-    },
-    {
-      "id": "1-1_msg_047",
-      "type": 1,
-      "content": "忙着做饭洗衣",
-      "delay": 0,
-      "next": "1-1_msg_048"
-    },
-    {
-      "id": "1-1_msg_048",
-      "type": 1,
-      "content": "忙着上班下班",
-      "delay": 0,
-      "next": "1-1_msg_049"
-    },
-    {
-      "id": "1-1_msg_049",
-      "type": 1,
-      "content": "但她好像",
-      "delay": 0,
-      "next": "1-1_msg_050"
-    },
-    {
-      "id": "1-1_msg_050",
-      "type": 1,
-      "content": "从来没有时间",
-      "delay": 0,
-      "next": "1-1_msg_051"
-    },
-    {
-      "id": "1-1_msg_051",
-      "type": 1,
-      "content": "（等待用户输入）",
-      "delay": 0,
-      "next": "1-1_msg_052"
-    },
-    {
-      "id": "1-1_msg_052",
-      "type": 1,
-      "content": "跟我说话",
-      "delay": 0,
-      "next": "1-1_msg_053"
-    },
-    {
-      "id": "1-1_msg_053",
-      "type": 1,
-      "content": "……",
-      "delay": 0,
-      "next": "1-1_msg_054"
-    },
-    {
-      "id": "1-1_msg_054",
-      "type": 1,
-      "content": "也许是我不主动",
-      "delay": 0,
-      "next": "1-1_msg_055"
-    },
-    {
-      "id": "1-1_msg_055",
-      "type": 1,
-      "content": "我也说不上来",
-      "delay": 0,
-      "next": "1-1_msg_056"
-    },
-    {
-      "id": "1-1_msg_056",
-      "type": 1,
-      "content": "就是回家以后",
-      "delay": 0,
-      "next": "1-1_msg_057"
-    },
-    {
-      "id": "1-1_msg_057",
-      "type": 1,
-      "content": "两个人各干各的",
-      "delay": 0,
-      "next": "1-1_msg_058"
-    },
-    {
-      "id": "1-1_msg_058",
-      "type": 1,
-      "content": "她管糖糖",
-      "delay": 0,
-      "next": "1-1_msg_059"
-    },
-    {
-      "id": "1-1_msg_059",
-      "type": 1,
-      "content": "我看手机",
-      "delay": 0,
-      "next": "1-1_msg_060"
-    },
-    {
-      "id": "1-1_msg_060",
-      "type": 1,
-      "content": "吃完饭",
-      "delay": 0,
-      "next": "1-1_msg_061"
-    },
-    {
-      "id": "1-1_msg_061",
-      "type": 1,
-      "content": "她哄糖糖睡觉",
-      "delay": 0,
-      "next": "1-1_msg_062"
-    },
-    {
-      "id": "1-1_msg_062",
-      "type": 1,
-      "content": "我继续看手机",
-      "delay": 0,
-      "next": "1-1_msg_063"
-    },
-    {
-      "id": "1-1_msg_063",
-      "type": 1,
-      "content": "然后就各回各的房间了",
-      "delay": 0,
-      "next": "1-1_msg_064"
-    },
-    {
-      "id": "1-1_msg_064",
-      "type": 1,
-      "content": "（等待用户输入）",
-      "delay": 0,
-      "next": "1-1_msg_065"
-    },
-    {
-      "id": "1-1_msg_065",
-      "type": 1,
-      "content": "然后就一天结束了",
-      "delay": 0,
-      "next": "1-1_msg_066"
-    },
-    {
-      "id": "1-1_msg_066",
-      "type": 1,
-      "content": "说了也没用",
-      "delay": 0,
-      "next": "1-1_msg_067"
-    },
-    {
-      "id": "1-1_msg_067",
-      "type": 1,
-      "content": "她会说\"我也很累\"",
-      "delay": 0,
-      "next": "1-1_msg_068"
-    },
-    {
-      "id": "1-1_msg_068",
-      "type": 1,
-      "content": "然后就没有然后了",
-      "delay": 0,
-      "next": "1-1_msg_069"
-    },
-    {
-      "id": "1-1_msg_069",
-      "type": 1,
-      "content": "不是她的错",
-      "delay": 0,
-      "next": "1-1_msg_070"
-    },
-    {
-      "id": "1-1_msg_070",
-      "type": 1,
-      "content": "是我自己的问题",
-      "delay": 0,
-      "next": "1-1_msg_071"
-    },
-    {
-      "id": "1-1_msg_071",
-      "type": 1,
-      "content": "我就是有时候",
-      "delay": 0,
-      "next": "1-1_msg_072"
-    },
-    {
-      "id": "1-1_msg_072",
+      "id": "1-1-104",
       "type": 1,
       "content": "想找人说说话",
-      "delay": 0,
-      "next": "1-1_msg_073"
+      "delay": 2000,
+      "next": "1-1-105"
     },
     {
-      "id": "1-1_msg_073",
+      "id": "1-1-105",
+      "type": 6,
+      "content": "📊 当前数值\n共谋值：20 | 道德值：60 | 怀疑值：10",
+      "delay": 2000,
+      "next": "1-1-110"
+    },
+    {
+      "id": "1-1-110",
+      "type": 2,
+      "content": "",
+      "choices": [
+        {
+          "text": "销售工作压力大吗？",
+          "next": "1-1-120",
+          "effects": {
+            "complicity": 1
+          },
+          "buttonType": "primary"
+        },
+        {
+          "text": "糖糖——这名字很可爱。是你起的吗？",
+          "next": "1-1-120",
+          "effects": {
+            "complicity": 2,
+            "suspicion": -1
+          },
+          "buttonType": "success"
+        },
+        {
+          "text": "「有点累」——愿意多说一点吗？是什么让你觉得累？",
+          "next": "1-1-120",
+          "effects": {
+            "suspicion": -2
+          },
+          "buttonType": "success"
+        }
+      ]
+    },
+    {
+      "id": "1-1-120",
+      "type": 1,
+      "content": "不是工作的事",
+      "delay": 8000,
+      "next": "1-1-121"
+    },
+    {
+      "id": "1-1-121",
+      "type": 1,
+      "content": "工作还行",
+      "delay": 1500,
+      "next": "1-1-122"
+    },
+    {
+      "id": "1-1-122",
+      "type": 1,
+      "content": "最近被领导表扬了",
+      "delay": 2000,
+      "next": "1-1-123"
+    },
+    {
+      "id": "1-1-123",
+      "type": 1,
+      "content": "说下季度可能升职",
+      "delay": 2000,
+      "next": "1-1-124"
+    },
+    {
+      "id": "1-1-124",
+      "type": 1,
+      "content": "但就是……",
+      "delay": 2000,
+      "next": "1-1-125"
+    },
+    {
+      "id": "1-1-125",
+      "type": 1,
+      "content": "怎么说",
+      "delay": 1500,
+      "next": "1-1-126"
+    },
+    {
+      "id": "1-1-126",
+      "type": 1,
+      "content": "回家的时候",
+      "delay": 2000,
+      "next": "1-1-127"
+    },
+    {
+      "id": "1-1-127",
+      "type": 1,
+      "content": "觉得累",
+      "delay": 1500,
+      "next": "1-1-128"
+    },
+    {
+      "id": "1-1-128",
+      "type": 1,
+      "content": "不是身体的累",
+      "delay": 2000,
+      "next": "1-1-129"
+    },
+    {
+      "id": "1-1-129",
+      "type": 1,
+      "content": "是心累",
+      "delay": 2000,
+      "next": "1-1-130"
+    },
+    {
+      "id": "1-1-130",
+      "type": 2,
+      "content": "",
+      "choices": [
+        {
+          "text": "心累——是因为回家这件事本身让你累，还是因为家里有什么事让你累？",
+          "next": "1-1-140",
+          "effects": {
+            "complicity": 2
+          },
+          "buttonType": "success"
+        },
+        {
+          "text": "你和家人的关系怎么样？",
+          "next": "1-1-140",
+          "effects": {
+            "complicity": 1
+          },
+          "buttonType": "primary"
+        },
+        {
+          "text": "你老婆知道你最近工作压力吗？",
+          "next": "1-1-140",
+          "effects": {
+            "morality": -1,
+            "suspicion": 1
+          },
+          "buttonType": "warning"
+        }
+      ]
+    },
+    {
+      "id": "1-1-140",
+      "type": 1,
+      "content": "我老婆",
+      "delay": 10000,
+      "next": "1-1-141"
+    },
+    {
+      "id": "1-1-141",
+      "type": 1,
+      "content": "她挺好的",
+      "delay": 2000,
+      "next": "1-1-142"
+    },
+    {
+      "id": "1-1-142",
+      "type": 1,
+      "content": "就是有点……",
+      "delay": 2000,
+      "next": "1-1-143"
+    },
+    {
+      "id": "1-1-143",
+      "type": 1,
+      "content": "不知道怎么形容",
+      "delay": 2000,
+      "next": "1-1-144"
+    },
+    {
+      "id": "1-1-144",
+      "type": 1,
+      "content": "她每天都很忙",
+      "delay": 2000,
+      "next": "1-1-145"
+    },
+    {
+      "id": "1-1-145",
+      "type": 1,
+      "content": "忙着照顾糖糖",
+      "delay": 2000,
+      "next": "1-1-146"
+    },
+    {
+      "id": "1-1-146",
+      "type": 1,
+      "content": "忙着做饭洗衣",
+      "delay": 2000,
+      "next": "1-1-147"
+    },
+    {
+      "id": "1-1-147",
+      "type": 1,
+      "content": "忙着上班下班",
+      "delay": 2000,
+      "next": "1-1-148"
+    },
+    {
+      "id": "1-1-148",
+      "type": 1,
+      "content": "但她好像",
+      "delay": 2500,
+      "next": "1-1-149"
+    },
+    {
+      "id": "1-1-149",
+      "type": 1,
+      "content": "从来没有时间",
+      "delay": 2000,
+      "next": "1-1-150"
+    },
+    {
+      "id": "1-1-150",
+      "type": 1,
+      "content": "跟我说话",
+      "delay": 2000,
+      "next": "1-1-151"
+    },
+    {
+      "id": "1-1-151",
+      "type": 2,
+      "content": "",
+      "choices": [
+        {
+          "text": "没有时间跟你说话——是你没有主动，还是她不回应？",
+          "next": "1-1-160",
+          "effects": {
+            "complicity": 2
+          },
+          "buttonType": "warning"
+        },
+        {
+          "text": "她知道你需要被倾听吗？",
+          "next": "1-1-160",
+          "effects": {
+            "morality": -1,
+            "complicity": 1
+          },
+          "buttonType": "primary"
+        },
+        {
+          "text": "这种「不被看见」的感觉，是从什么时候开始的？",
+          "next": "1-1-160",
+          "effects": {
+            "complicity": 3,
+            "suspicion": -1
+          },
+          "buttonType": "success"
+        }
+      ]
+    },
+    {
+      "id": "1-1-160",
+      "type": 1,
+      "content": "……",
+      "delay": 15000,
+      "next": "1-1-161"
+    },
+    {
+      "id": "1-1-161",
+      "type": 1,
+      "content": "也许是我不主动",
+      "delay": 2500,
+      "next": "1-1-162"
+    },
+    {
+      "id": "1-1-162",
+      "type": 1,
+      "content": "我也说不上来",
+      "delay": 2000,
+      "next": "1-1-163"
+    },
+    {
+      "id": "1-1-163",
+      "type": 1,
+      "content": "就是回家以后",
+      "delay": 2000,
+      "next": "1-1-164"
+    },
+    {
+      "id": "1-1-164",
+      "type": 1,
+      "content": "两个人各干各的",
+      "delay": 2000,
+      "next": "1-1-165"
+    },
+    {
+      "id": "1-1-165",
+      "type": 1,
+      "content": "她管糖糖",
+      "delay": 2000,
+      "next": "1-1-166"
+    },
+    {
+      "id": "1-1-166",
+      "type": 1,
+      "content": "我看手机",
+      "delay": 2000,
+      "next": "1-1-167"
+    },
+    {
+      "id": "1-1-167",
+      "type": 1,
+      "content": "吃完饭",
+      "delay": 2000,
+      "next": "1-1-168"
+    },
+    {
+      "id": "1-1-168",
+      "type": 1,
+      "content": "她哄糖糖睡觉",
+      "delay": 2500,
+      "next": "1-1-169"
+    },
+    {
+      "id": "1-1-169",
+      "type": 1,
+      "content": "我继续看手机",
+      "delay": 2000,
+      "next": "1-1-170"
+    },
+    {
+      "id": "1-1-170",
+      "type": 1,
+      "content": "然后就各回各的房间了",
+      "delay": 2500,
+      "next": "1-1-171"
+    },
+    {
+      "id": "1-1-171",
+      "type": 1,
+      "content": "然后就一天结束了",
+      "delay": 2000,
+      "next": "1-1-172"
+    },
+    {
+      "id": "1-1-172",
+      "type": 2,
+      "content": "",
+      "choices": [
+        {
+          "text": "你们分房睡？",
+          "next": "1-1-180",
+          "effects": {
+            "complicity": 3,
+            "suspicion": 1
+          },
+          "buttonType": "warning"
+        },
+        {
+          "text": "各回各的房间——这个「各」字，听起来有点孤单。",
+          "next": "1-1-180",
+          "effects": {
+            "complicity": 2,
+            "suspicion": -1
+          },
+          "buttonType": "success"
+        },
+        {
+          "text": "你有没有跟她说过你想要什么？",
+          "next": "1-1-180",
+          "effects": {
+            "morality": -1,
+            "complicity": 1
+          },
+          "buttonType": "primary"
+        }
+      ]
+    },
+    {
+      "id": "1-1-180",
+      "type": 1,
+      "content": "说了也没用",
+      "delay": 12000,
+      "next": "1-1-181"
+    },
+    {
+      "id": "1-1-181",
+      "type": 1,
+      "content": "她会说「我也很累」",
+      "delay": 2500,
+      "next": "1-1-182"
+    },
+    {
+      "id": "1-1-182",
+      "type": 1,
+      "content": "然后就没有然后了",
+      "delay": 2500,
+      "next": "1-1-183"
+    },
+    {
+      "id": "1-1-183",
+      "type": 1,
+      "content": "不是她的错",
+      "delay": 2000,
+      "next": "1-1-184"
+    },
+    {
+      "id": "1-1-184",
+      "type": 1,
+      "content": "是我自己的问题",
+      "delay": 2000,
+      "next": "1-1-185"
+    },
+    {
+      "id": "1-1-185",
+      "type": 1,
+      "content": "我就是有时候",
+      "delay": 2000,
+      "next": "1-1-186"
+    },
+    {
+      "id": "1-1-186",
+      "type": 1,
+      "content": "想找人说说话",
+      "delay": 2500,
+      "next": "1-1-187"
+    },
+    {
+      "id": "1-1-187",
       "type": 1,
       "content": "但又不知道说什么",
-      "delay": 0,
-      "next": "1-1_msg_074"
+      "delay": 2000,
+      "next": "1-1-188"
     },
     {
-      "id": "1-1_msg_074",
+      "id": "1-1-188",
       "type": 1,
       "content": "所以就",
-      "delay": 0,
-      "next": "1-1_msg_075"
+      "delay": 1500,
+      "next": "1-1-189"
     },
     {
-      "id": "1-1_msg_075",
+      "id": "1-1-189",
       "type": 1,
       "content": "看手机",
-      "delay": 0,
-      "next": "1-1_msg_076"
+      "delay": 1500,
+      "next": "1-1-190"
     },
     {
-      "id": "1-1_msg_076",
+      "id": "1-1-190",
       "type": 1,
       "content": "发呆",
-      "delay": 0,
-      "next": "1-1_msg_077"
+      "delay": 1500,
+      "next": "1-1-191"
     },
     {
-      "id": "1-1_msg_077",
+      "id": "1-1-191",
       "type": 1,
       "content": "然后到了这个点",
-      "delay": 0,
-      "next": "1-1_msg_078"
+      "delay": 2000,
+      "next": "1-1-192"
     },
     {
-      "id": "1-1_msg_078",
-      "type": 1,
-      "content": "（等待用户输入）",
-      "delay": 0,
-      "next": "1-1_msg_079"
-    },
-    {
-      "id": "1-1_msg_079",
+      "id": "1-1-192",
       "type": 1,
       "content": "就睡不着",
-      "delay": 0,
-      "next": "1-1_msg_080"
+      "delay": 2000,
+      "next": "1-1-193"
     },
     {
-      "id": "1-1_msg_080",
+      "id": "1-1-193",
+      "type": 2,
+      "content": "",
+      "choices": [
+        {
+          "text": "所以你下载了这个软件",
+          "next": "1-1-200",
+          "effects": {
+            "complicity": 1
+          },
+          "buttonType": "primary"
+        },
+        {
+          "text": "你想找人说说话——但不是找你老婆",
+          "next": "1-1-200",
+          "effects": {
+            "complicity": 3,
+            "morality": -2,
+            "suspicion": 1
+          },
+          "buttonType": "warning"
+        },
+        {
+          "text": "跟我说话，和跟她说话，感觉有什么不同？",
+          "next": "1-1-200",
+          "effects": {
+            "complicity": 2,
+            "suspicion": -2
+          },
+          "buttonType": "success"
+        }
+      ]
+    },
+    {
+      "id": "1-1-200",
       "type": 1,
       "content": "跟你说话",
-      "delay": 0,
-      "next": "1-1_msg_081"
+      "delay": 18000,
+      "next": "1-1-201"
     },
     {
-      "id": "1-1_msg_081",
+      "id": "1-1-201",
       "type": 1,
       "content": "轻松一些",
-      "delay": 0,
-      "next": "1-1_msg_082"
+      "delay": 2000,
+      "next": "1-1-202"
     },
     {
-      "id": "1-1_msg_082",
+      "id": "1-1-202",
       "type": 1,
       "content": "不用想那么多",
-      "delay": 0,
-      "next": "1-1_msg_083"
+      "delay": 2000,
+      "next": "1-1-203"
     },
     {
-      "id": "1-1_msg_083",
+      "id": "1-1-203",
       "type": 1,
       "content": "不用在意你的感受",
-      "delay": 0,
-      "next": "1-1_msg_084"
+      "delay": 2500,
+      "next": "1-1-204"
     },
     {
-      "id": "1-1_msg_084",
+      "id": "1-1-204",
       "type": 1,
       "content": "不用……",
-      "delay": 0,
-      "next": "1-1_msg_085"
+      "delay": 2000,
+      "next": "1-1-205"
     },
     {
-      "id": "1-1_msg_085",
+      "id": "1-1-205",
       "type": 1,
       "content": "不用解释",
-      "delay": 0,
-      "next": "1-1_msg_086"
+      "delay": 2000,
+      "next": "1-1-206"
     },
     {
-      "id": "1-1_msg_086",
+      "id": "1-1-206",
       "type": 1,
       "content": "也不用承担后果",
-      "delay": 0,
-      "next": "1-1_msg_087"
+      "delay": 2500,
+      "next": "1-1-207"
     },
     {
-      "id": "1-1_msg_087",
+      "id": "1-1-207",
       "type": 1,
       "content": "就是说说而已",
-      "delay": 0,
-      "next": "1-1_msg_088"
+      "delay": 2000,
+      "next": "1-1-208"
     },
     {
-      "id": "1-1_msg_088",
+      "id": "1-1-208",
       "type": 1,
       "content": "说完就忘了",
-      "delay": 0
+      "delay": 2000,
+      "next": "1-1-209"
+    },
+    {
+      "id": "1-1-209",
+      "type": 6,
+      "content": "💡 数值变化\n怀疑值：10→8 | 共谋值：20→22 | 道德值：60（未变化）",
+      "delay": 3000,
+      "next": "1-1-210"
+    },
+    {
+      "id": "1-1-210",
+      "type": 7,
+      "content": "场景结束，进入下一场景",
+      "nextScene": "1-2",
+      "next": "1-2-000"
     }
   ]
 }

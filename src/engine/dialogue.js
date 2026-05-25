@@ -194,6 +194,14 @@ class DialogueEngine {
   }
 
   /**
+   * 获取当前选项
+   * @returns {Array|null} 当前节点的选项数组
+   */
+  getCurrentChoices() {
+    return this.currentNode?.choices || null
+  }
+
+  /**
    * 更新数值
    * @param {Object} effects - 数值变化（如 { trust: 5, curiosity: -2 }）
    */
@@ -343,6 +351,68 @@ class DialogueEngine {
     this.history = []
     this.isProcessing = false
     console.log('[DialogueEngine] Engine reset')
+  }
+
+  /**
+   * 获取当前场景ID
+   * @returns {string|null}
+   */
+  get currentSceneId() {
+    return this.currentScene?.sceneId || null
+  }
+
+  /**
+   * 获取选择历史
+   * @returns {Array} 历史记录
+   */
+  getHistory() {
+    return [...this.history]
+  }
+
+  /**
+   * 获取指定场景的指定节点
+   * @param {string} sceneId
+   * @param {string} nodeId
+   * @returns {Promise<Object|null>}
+   */
+  async getNode(sceneId, nodeId) {
+    const scene = await this.loadScene(sceneId)
+    return scene.nodes.find(n => n.id === nodeId) || null
+  }
+
+  /**
+   * 获取当前数值状态
+   * @returns {Object}
+   */
+  getStats() {
+    const store = window.useGameStore ? window.useGameStore() : null
+    return store?.stats || { complicity: 20, morality: 60, suspicion: 10 }
+  }
+
+  /**
+   * 推进到下一条消息
+   * @returns {Promise<Object|null>}
+   */
+  async advance() {
+    const node = this.currentNode
+    if (!node || !node.next) return null
+
+    const nextNodeId = node.next
+    const nextSceneId = node.nextScene || this.currentScene.sceneId
+
+    if (nextSceneId !== this.currentScene.sceneId) {
+      this.currentScene = await this.loadScene(nextSceneId)
+    }
+
+    this.currentNode = this.findNode(nextNodeId)
+    return this.currentNode
+  }
+
+  /**
+   * 重置游戏（别名）
+   */
+  resetGame() {
+    this.reset()
   }
 }
 
